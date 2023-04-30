@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/icon"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal">
@@ -12,12 +11,12 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/location"
+            android:id="@+id/row_location"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
         <TextView
-            android:id="@+id/address"
+            android:id="@+id/row_address"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>
