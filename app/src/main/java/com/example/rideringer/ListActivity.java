@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class ListActivity extends AppCompatActivity {
     private Cursor model = null;
@@ -26,6 +27,7 @@ public class ListActivity extends AppCompatActivity {
 
         db = new Database(this);
         list = findViewById(R.id.locationlist);
+        db.insert("test", "test");
         model = db.getAll();
         adapter = new LocationAdapter(this, model, 0);
         list.setAdapter(adapter);
@@ -39,7 +41,7 @@ public class ListActivity extends AppCompatActivity {
             //TO DO
         }
     };
-    static class LocationHolder {
+    private static class LocationHolder {
         private TextView locationName = null;
         private TextView locationAddress = null;
 
@@ -53,7 +55,7 @@ public class ListActivity extends AppCompatActivity {
             locationAddress.setText(helper.getLocationAddress(c));
         }
     }
-    class LocationAdapter extends CursorAdapter {
+    private class LocationAdapter extends CursorAdapter {
         LocationAdapter(Context context, Cursor cursor, int flags){
             super(context, cursor, flags);
         }
@@ -63,6 +65,7 @@ public class ListActivity extends AppCompatActivity {
             LayoutInflater inflater = getLayoutInflater();
             View row = inflater.inflate(R.layout.list_row, parent, false);
             LocationHolder holder = new LocationHolder(row);
+            row.setTag(holder);
             return row;
         }
 
@@ -71,6 +74,16 @@ public class ListActivity extends AppCompatActivity {
             LocationHolder holder = (LocationHolder) view.getTag();
             holder.populateFrom(cursor, db);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (model != null) {
+            model.close();
+        }
+        model = db.getAll();
+        adapter.swapCursor(model);
     }
 
     @Override
