@@ -27,7 +27,6 @@ public class ListActivity extends AppCompatActivity {
 
         db = new Database(this);
         list = findViewById(R.id.locationlist);
-        db.insert("test", "test");
         model = db.getAll();
         adapter = new LocationAdapter(this, model, 0);
         list.setAdapter(adapter);

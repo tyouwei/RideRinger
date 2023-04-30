@@ -30,7 +30,7 @@ public class SearchActivity extends AppCompatActivity {
         public void onClick(View v) {
             String nameStr = name.getText().toString();
             String addrStr = addr.getText().toString();
-            db.insert("test", "test");
+            db.insert(nameStr, addrStr);
             finish();
         }
     };
