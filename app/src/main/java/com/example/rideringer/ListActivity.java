@@ -37,9 +37,10 @@ public class ListActivity extends AppCompatActivity {
     private AdapterView.OnItemClickListener onListClick = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            //TO DO
+            //CREATE A POP UP TO CONFIRM SETTING OF ALARM
         }
     };
+
     private static class LocationHolder {
         private TextView locationName = null;
         private TextView locationAddress = null;
