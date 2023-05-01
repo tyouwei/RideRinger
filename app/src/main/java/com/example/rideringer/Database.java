@@ -19,7 +19,9 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE locations_table (" +
                 "_id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "locationName TEXT," +
-                "locationAddress TEXT);"
+                "locationAddress TEXT," +
+                "lat REAL," +
+                "lon REAL);"
         );
     }
 
@@ -36,12 +38,27 @@ public class Database extends SQLiteOpenHelper {
                                 "ORDER BY locationName", null);
     }
 
-    public void insert (String locationName, String locationAddress) {
+    public void insert (String locationName, String locationAddress, double lat, double lon) {
         ContentValues cv = new ContentValues();
         cv.put("locationName", locationName);
         cv.put("locationAddress", locationAddress);
-
+        cv.put("lat", lat);
+        cv.put("lon", lon);
         getWritableDatabase().insert("locations_table", "locationName", cv);
+    }
+
+    public void update (String id, String locationName, String locationAddress, double lat, double lon) {
+        ContentValues cv = new ContentValues();
+        String[] args = {id};
+        cv.put("locationName", locationName);
+        cv.put("locationAddress", locationAddress);
+        cv.put("lat", lat);
+        cv.put("lon", lon);
+        getWritableDatabase().update("locations_table", cv, "_ID=?", args);
+    }
+
+    public String getID(Cursor c) {
+        return c.getString(0);
     }
 
     public String getLocationName(Cursor c) {
@@ -50,5 +67,13 @@ public class Database extends SQLiteOpenHelper {
 
     public String getLocationAddress(Cursor c) {
         return c.getString(2);
+    }
+
+    public String getLatitude(Cursor c) {
+        return c.getString(3);
+    }
+
+    public String getLongitude(Cursor c) {
+        return c.getString(4);
     }
 }
