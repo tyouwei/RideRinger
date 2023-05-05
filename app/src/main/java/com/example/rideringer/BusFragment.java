@@ -60,4 +60,15 @@ public class BusFragment extends Fragment {
             String item = parent.getItemAtPosition(position).toString();
         }
     };
+
+    OkHttpClient client = new OkHttpClient().newBuilder()
+            .build();
+    MediaType mediaType = MediaType.parse("text/plain");
+    RequestBody body = RequestBody.create(mediaType, "");
+    Request request = new Request.Builder()
+            .url("http://datamall2.mytransport.sg/ltaodataservice/BusStops")
+            .method("GET", body)
+            .addHeader("AccountKey", "5c5Iep5nTs6hFLsVV9w4/A==")
+            .build();
+    Response response = client.newCall(request).execute();
 }
