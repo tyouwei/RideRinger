@@ -21,6 +21,9 @@ public class SearchActivity extends AppCompatActivity {
     private TabLayout tabLayout;
     private ViewPager2 viewPager2;
     private TransportTabAdapter ttAdapter;
+    private GPSTracker gpsTracker;
+    private double latitude = 0.0d;
+    private double longitude = 0.0d;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +36,7 @@ public class SearchActivity extends AppCompatActivity {
         viewPager2.setAdapter(ttAdapter);
         tabLayout.addOnTabSelectedListener(onTabSelected);
         viewPager2.registerOnPageChangeCallback(onPageChange);
+        gpsTracker = new GPSTracker(SearchActivity.this);
     }
 
     private TabLayout.OnTabSelectedListener onTabSelected = new TabLayout.OnTabSelectedListener() {
@@ -63,6 +67,7 @@ public class SearchActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        gpsTracker.stopUsingGPS();
     }
 
     class TransportTabAdapter extends FragmentStateAdapter {
