@@ -35,12 +35,16 @@ public class BusFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_bus, container, false);
         this.db = new Database(getActivity());
+
         v.findViewById(R.id.bus_save).setOnClickListener(onSave);
         v.findViewById(R.id.bus_alarm).setOnClickListener(onAlarm);
+
+        // For the drop-down list
         autoCompleteTextView = v.findViewById(R.id.bus_drop_list);
         adapterItems = new ArrayAdapter<>(getContext(), R.layout.drop_down_item, mrt);
         autoCompleteTextView.setAdapter(adapterItems);
         autoCompleteTextView.setOnItemClickListener(onClick);
+
         fetchBusStops();
         return v;
     }
@@ -54,7 +58,7 @@ public class BusFragment extends Fragment {
     private View.OnClickListener onSave = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            //db.insert(nameStr, addrStr);
+            //db.insert(nameStr, addStr);
         }
     };
 
@@ -77,7 +81,7 @@ public class BusFragment extends Fragment {
                 .build();
         Request request = new Request.Builder()
                 .url("http://datamall2.mytransport.sg/ltaodataservice/BusStops")
-                .addHeader("AccountKey", "5c5Iep5nTs6hFLsVV9w4/A==")
+                .addHeader("AccountKey", "5c5Iep5nTs6hF LsVV9w4/A==")
                 .build();
 
         client.newCall(request).enqueue(new Callback() {
