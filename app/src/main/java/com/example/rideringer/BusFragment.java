@@ -106,7 +106,7 @@ public class BusFragment extends Fragment {
                                 .getJSONArray("value");
                         int len = obj.length();
                         for (int i = 0; i < len; i++) {
-                            buses.add(obj.getJSONObject(i).getString("Description"));
+                            buses.add(obj.getJSONObject(i).getString("BusStopCode"));
                         }
                     } catch (JSONException e) {
                         Log.e("JSON Conversion", "Response not successful: " + response);
