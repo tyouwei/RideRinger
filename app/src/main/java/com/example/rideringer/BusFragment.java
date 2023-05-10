@@ -2,7 +2,6 @@ package com.example.rideringer;
 
 import android.os.Bundle;
 
-import androidx.core.os.BuildCompat;
 import androidx.fragment.app.Fragment;
 
 import android.os.Handler;
@@ -27,10 +26,8 @@ import java.util.concurrent.CompletableFuture;
 
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class BusFragment extends Fragment {
@@ -93,12 +90,6 @@ public class BusFragment extends Fragment {
         int numOfCalls = 11;
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();
-        Request request = new Request.Builder()
-                .url("http://datamall2.mytransport.sg/ltaodataservice/BusStops")
-                .addHeader("AccountKey", getString(R.string.datamall_lta_key))
-                .build();
-
-        client.newCall(request).enqueue(new Callback() {
         Callback cb = new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -138,7 +129,7 @@ public class BusFragment extends Fragment {
             final int callSize = i * 500;
             CompletableFuture<Void> request = CompletableFuture.supplyAsync(() -> new Request.Builder())
                     .thenApplyAsync(x -> x.url("http://datamall2.mytransport.sg/ltaodataservice/BusStops?$skip=" + callSize))
-                    .thenApplyAsync(x -> x.addHeader("AccountKey", "5c5Iep5nTs6hFLsVV9w4/A=="))
+                    .thenApplyAsync(x -> x.addHeader("AccountKey", getString(R.string.datamall_lta_key)))
                     .thenApplyAsync(x -> x.build())
                     .thenAcceptAsync(x -> client.newCall(x).enqueue(cb));
             cf[i] = request;
