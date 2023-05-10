@@ -20,6 +20,8 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Queue;
+import java.util.concurrent.CompletableFuture;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -83,14 +85,10 @@ public class BusFragment extends Fragment {
     };
 
     private void fetchBusStops() {
+        int numOfCalls = 11;
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();
-        Request request = new Request.Builder()
-                .url("http://datamall2.mytransport.sg/ltaodataservice/BusStops")
-                .addHeader("AccountKey", "5c5Iep5nTs6hFLsVV9w4/A==")
-                .build();
-
-        client.newCall(request).enqueue(new Callback() {
+        Callback cb = new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
@@ -115,6 +113,19 @@ public class BusFragment extends Fragment {
                     Log.e("REST API", "Response not successful: " + response);
                 }
             }
-        });
+        };
+
+        CompletableFuture<Void>[] cf = new CompletableFuture[numOfCalls];
+        for (int i = 0; i < numOfCalls; i++) {
+            final int callSize = i * 500;
+            CompletableFuture<Void> request = CompletableFuture.supplyAsync(() -> new Request.Builder())
+                    .thenApplyAsync(x -> x.url("http://datamall2.mytransport.sg/ltaodataservice/BusStops?$skip=" + callSize))
+                    .thenApplyAsync(x -> x.addHeader("AccountKey", "5c5Iep5nTs6hFLsVV9w4/A=="))
+                    .thenApplyAsync(x -> x.build())
+                    .thenAcceptAsync(x -> client.newCall(x).enqueue(cb));
+            cf[i] = request;
+        }
+
+        CompletableFuture.allOf(cf).join();
     }
 }
