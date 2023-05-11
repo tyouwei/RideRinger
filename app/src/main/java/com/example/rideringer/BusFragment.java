@@ -1,10 +1,12 @@
 package com.example.rideringer;
 
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +14,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.Toast;
+import android.widget.ProgressBar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,15 +22,13 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Queue;
 import java.util.concurrent.CompletableFuture;
+
 
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class BusFragment extends Fragment {
@@ -36,6 +36,7 @@ public class BusFragment extends Fragment {
     AutoCompleteTextView autoCompleteTextView;
     ArrayAdapter<String> adapterItems;
     private Database db;
+    private ProgressBar progressBar;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -45,6 +46,8 @@ public class BusFragment extends Fragment {
         buses.add("");
         fetchBusStops();
 
+        // Process of fetching bus stop data from LTA Data mall API
+        progressBar = v.findViewById(R.id.progressBar);
         v.findViewById(R.id.bus_save).setOnClickListener(onSave);
         v.findViewById(R.id.bus_alarm).setOnClickListener(onAlarm);
 
@@ -98,7 +101,7 @@ public class BusFragment extends Fragment {
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String responseBody = response.body().string();
-                    Log.e("REST API", "Response is successful: " + responseBody);
+                    Log.d("REST API", "Response is successful: " + responseBody);
                     try {
                         JSONArray obj = new JSONObject(responseBody)
                                 .getJSONArray("value");
@@ -108,6 +111,13 @@ public class BusFragment extends Fragment {
                         }
                     } catch (JSONException e) {
                         Log.e("JSON Conversion", "Response not successful: " + response);
+                    } finally {
+                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                            @Override
+                            public void run() {
+                                progressBar.setVisibility(View.GONE);
+                            }
+                        });
                     }
                 } else {
                     Log.e("REST API", "Response not successful: " + response);
@@ -120,7 +130,7 @@ public class BusFragment extends Fragment {
             final int callSize = i * 500;
             CompletableFuture<Void> request = CompletableFuture.supplyAsync(() -> new Request.Builder())
                     .thenApplyAsync(x -> x.url("http://datamall2.mytransport.sg/ltaodataservice/BusStops?$skip=" + callSize))
-                    .thenApplyAsync(x -> x.addHeader("AccountKey", "5c5Iep5nTs6hFLsVV9w4/A=="))
+                    .thenApplyAsync(x -> x.addHeader("AccountKey", BuildConfig.LTA_KEY))
                     .thenApplyAsync(x -> x.build())
                     .thenAcceptAsync(x -> client.newCall(x).enqueue(cb));
             cf[i] = request;
