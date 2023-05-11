@@ -1,5 +1,6 @@
 package com.example.rideringer;
 
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -129,7 +130,7 @@ public class BusFragment extends Fragment {
             final int callSize = i * 500;
             CompletableFuture<Void> request = CompletableFuture.supplyAsync(() -> new Request.Builder())
                     .thenApplyAsync(x -> x.url("http://datamall2.mytransport.sg/ltaodataservice/BusStops?$skip=" + callSize))
-                    .thenApplyAsync(x -> x.addHeader("AccountKey", getString(R.string.datamall_lta_key)))
+                    .thenApplyAsync(x -> x.addHeader("AccountKey", BuildConfig.LTA_KEY))
                     .thenApplyAsync(x -> x.build())
                     .thenAcceptAsync(x -> client.newCall(x).enqueue(cb));
             cf[i] = request;
