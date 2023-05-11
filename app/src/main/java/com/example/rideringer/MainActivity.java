@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
     private View.OnClickListener onSearch = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent i = new Intent(getApplicationContext(), SearchActivity.class);
+            Intent i = new Intent(getApplicationContext(), LoadingScreen.class);
             startActivity(i);
         }
     };

@@ -19,10 +19,14 @@
         android:theme="@style/Theme.RideRinger"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <activity
+            android:name=".LoadingScreen"
+            android:exported="false" />
+
         <service
             android:name=".GPSTracker"
             android:enabled="false"
-            android:exported="false"></service>
+            android:exported="false" />
 
         <activity
             android:name=".SearchActivity"

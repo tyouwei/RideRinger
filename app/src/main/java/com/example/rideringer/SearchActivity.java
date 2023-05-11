@@ -8,6 +8,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -16,12 +17,15 @@ import android.widget.Toast;
 
 import com.google.android.material.tabs.TabLayout;
 
+import java.util.ArrayList;
+
 public class SearchActivity extends AppCompatActivity {
 
     private TabLayout tabLayout;
     private ViewPager2 viewPager2;
     private TransportTabAdapter ttAdapter;
     private GPSTracker gpsTracker;
+    private ArrayList<String> busStops;
     private double latitude = 0.0d;
     private double longitude = 0.0d;
 
@@ -30,9 +34,13 @@ public class SearchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
+        Intent intent = getIntent();
+        this.busStops = (ArrayList<String>) intent.getSerializableExtra("Bus Stop Array");
+
         this.tabLayout = findViewById(R.id.tablayout);
         this.viewPager2 = findViewById(R.id.viewpager);
         this.ttAdapter = new TransportTabAdapter(this);
+
         viewPager2.setAdapter(ttAdapter);
         tabLayout.addOnTabSelectedListener(onTabSelected);
         viewPager2.registerOnPageChangeCallback(onPageChange);
@@ -78,13 +86,18 @@ public class SearchActivity extends AppCompatActivity {
         @NonNull
         @Override
         public Fragment createFragment(int position) {
+            BusFragment busFragment = new BusFragment();
+            Bundle bundle = new Bundle();
+            bundle.putStringArrayList("Bus Stops", busStops);
+            busFragment.setArguments(bundle);
+
             switch (position) {
                 case 0:
-                    return new BusFragment();
+                    return busFragment;
                 case 1:
                     return new MRTFragment();
                 default:
-                    return new BusFragment();
+                    return busFragment;
             }
         }
 
