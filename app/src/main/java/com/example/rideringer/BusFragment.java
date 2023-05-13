@@ -49,6 +49,10 @@ public class BusFragment extends Fragment {
         v.findViewById(R.id.bus_alarm).setOnClickListener(onAlarm);
         buses = getArguments().getStringArrayList("Bus Stops");
 
+        if (!buses.isEmpty()) {
+            buses.sort(Comparator.naturalOrder());
+        }
+
         // For the drop-down list
         autoCompleteTextView = v.findViewById(R.id.bus_drop_list);
         adapterItems = new ArrayAdapter<>(getContext(), R.layout.drop_down_item, buses);
