@@ -35,7 +35,7 @@ public class SearchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_search);
 
         Intent intent = getIntent();
-        this.busStops = (ArrayList<String>) intent.getSerializableExtra("Bus Stop Array");
+        this.busStops = getIntent().getStringArrayListExtra("Bus Stop Array");
 
         this.tabLayout = findViewById(R.id.tablayout);
         this.viewPager2 = findViewById(R.id.viewpager);
