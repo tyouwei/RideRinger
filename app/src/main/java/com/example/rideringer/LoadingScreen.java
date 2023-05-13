@@ -39,6 +39,7 @@ public class LoadingScreen extends AppCompatActivity {
 
     private ArrayList<String> fetchBusStops() {
         ArrayList<String> buses = new ArrayList<>();
+        ArrayList<Void> completedList = new ArrayList<>();
         buses.add("");
         int numOfCalls = 11;
         OkHttpClient client = new OkHttpClient().newBuilder()
@@ -62,6 +63,7 @@ public class LoadingScreen extends AppCompatActivity {
                             buses.add(obj.getJSONObject(i).getString("Description"));
                             //Log.e("REST API", new Integer(buses.size()).toString());
                         }
+                        completedList.add(null);
                     } catch (JSONException e) {
                         Log.e("JSON Conversion", "Response not successful: " + response);
                     } finally {
@@ -79,17 +81,27 @@ public class LoadingScreen extends AppCompatActivity {
         };
 
         List<CompletableFuture<Void>> cf = new ArrayList<>();
+
         for (int i = 0; i < numOfCalls; i++) {
-            final int callSize = i * 500;
+            final int index = i;
             CompletableFuture<Void> request = CompletableFuture.supplyAsync(() -> new Request.Builder())
-                    .thenApplyAsync(x -> x.url("http://datamall2.mytransport.sg/ltaodataservice/BusStops?$skip=" + callSize))
+                    .thenApplyAsync(x -> x.url("http://datamall2.mytransport.sg/ltaodataservice/BusStops?$skip=" + index * 500))
                     .thenApplyAsync(x -> x.addHeader("AccountKey", BuildConfig.LTA_KEY))
                     .thenApplyAsync(x -> x.build())
                     .thenAcceptAsync(x -> client.newCall(x).enqueue(cb));
             cf.add(request);
         }
-        cf.forEach(CompletableFuture::join);
-        return buses;
+        //My bootleg implementation of join
+        while (true) {
+            boolean complete = true;
+            if (completedList.size() != numOfCalls) {
+                complete = false;
+            }
+            if (complete) {
+                Log.e("REST API", new Integer(buses.size()).toString());
+                return buses;
+            }
+        }
     }
 
     private void onFinishLoad(ArrayList<String> arr) {
