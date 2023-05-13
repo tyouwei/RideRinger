@@ -33,8 +33,13 @@ public class LoadingScreen extends AppCompatActivity {
         setContentView(R.layout.activity_loading_screen);
 
         progressBar = findViewById(R.id.progressBar);
-        ArrayList<String> arr = fetchBusStops();
-        onFinishLoad(arr);
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                ArrayList<String> arr = fetchBusStops();
+                onFinishLoad(arr);
+            }
+        });
     }
 
     private ArrayList<String> fetchBusStops() {
@@ -66,13 +71,6 @@ public class LoadingScreen extends AppCompatActivity {
                         completedList.add(null);
                     } catch (JSONException e) {
                         Log.e("JSON Conversion", "Response not successful: " + response);
-                    } finally {
-                        new Handler(Looper.getMainLooper()).post(new Runnable() {
-                            @Override
-                            public void run() {
-                                progressBar.setVisibility(View.GONE);
-                            }
-                        });
                     }
                 } else {
                     Log.e("REST API", "Response not successful: " + response);
