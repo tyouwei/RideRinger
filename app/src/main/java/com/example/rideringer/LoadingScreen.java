@@ -16,6 +16,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import okhttp3.Call;
@@ -59,6 +60,7 @@ public class LoadingScreen extends AppCompatActivity {
                         int len = obj.length();
                         for (int i = 0; i < len; i++) {
                             buses.add(obj.getJSONObject(i).getString("Description"));
+                            //Log.e("REST API", new Integer(buses.size()).toString());
                         }
                     } catch (JSONException e) {
                         Log.e("JSON Conversion", "Response not successful: " + response);
@@ -76,7 +78,7 @@ public class LoadingScreen extends AppCompatActivity {
             }
         };
 
-        CompletableFuture<Void>[] cf = new CompletableFuture[numOfCalls];
+        List<CompletableFuture<Void>> cf = new ArrayList<>();
         for (int i = 0; i < numOfCalls; i++) {
             final int callSize = i * 500;
             CompletableFuture<Void> request = CompletableFuture.supplyAsync(() -> new Request.Builder())
@@ -84,9 +86,10 @@ public class LoadingScreen extends AppCompatActivity {
                     .thenApplyAsync(x -> x.addHeader("AccountKey", BuildConfig.LTA_KEY))
                     .thenApplyAsync(x -> x.build())
                     .thenAcceptAsync(x -> client.newCall(x).enqueue(cb));
-            cf[i] = request;
+            cf.add(request);
         }
-        return CompletableFuture.allOf(cf).thenApply(x -> buses).join();
+        cf.forEach(CompletableFuture::join);
+        return buses;
     }
 
     private void onFinishLoad(ArrayList<String> arr) {
