@@ -30,8 +30,8 @@ public class LoadingScreen extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loading_screen);
-
         progressBar = findViewById(R.id.progressBar);
+
         ArrayList<String> arr = fetchBusStops();
         onFinishLoad(arr);
     }
@@ -62,13 +62,6 @@ public class LoadingScreen extends AppCompatActivity {
                         }
                     } catch (JSONException e) {
                         Log.e("JSON Conversion", "Response not successful: " + response);
-                    } finally {
-                        new Handler(Looper.getMainLooper()).post(new Runnable() {
-                            @Override
-                            public void run() {
-                                progressBar.setVisibility(View.GONE);
-                            }
-                        });
                     }
                 } else {
                     Log.e("REST API", "Response not successful: " + response);
@@ -76,17 +69,26 @@ public class LoadingScreen extends AppCompatActivity {
             }
         };
 
-        CompletableFuture<Void>[] cf = new CompletableFuture[numOfCalls];
+        CompletableFuture<Void>[] cfArr = new CompletableFuture[numOfCalls];
         for (int i = 0; i < numOfCalls; i++) {
-            final int callSize = i * 500;
+            String link = "http://datamall2.mytransport.sg/ltaodataservice/BusStops?$skip=" + i * 500;
             CompletableFuture<Void> request = CompletableFuture.supplyAsync(() -> new Request.Builder())
-                    .thenApplyAsync(x -> x.url("http://datamall2.mytransport.sg/ltaodataservice/BusStops?$skip=" + callSize))
+                    .thenApplyAsync(x -> x.url(link))
                     .thenApplyAsync(x -> x.addHeader("AccountKey", BuildConfig.LTA_KEY))
                     .thenApplyAsync(x -> x.build())
                     .thenAcceptAsync(x -> client.newCall(x).enqueue(cb));
-            cf[i] = request;
+            cfArr[i] = request;
         }
-        return CompletableFuture.allOf(cf).thenApply(x -> buses).join();
+        CompletableFuture.allOf(cfArr).join();
+
+        // Plaster Solution make join() method wait
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        return buses;
     }
 
     private void onFinishLoad(ArrayList<String> arr) {

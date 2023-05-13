@@ -1,5 +1,6 @@
 package com.example.rideringer;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -7,13 +8,8 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.google.android.material.tabs.TabLayout;
 
@@ -34,7 +30,6 @@ public class SearchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-        Intent intent = getIntent();
         this.busStops = getIntent().getStringArrayListExtra("Bus Stop Array");
 
         this.tabLayout = findViewById(R.id.tablayout);
@@ -46,6 +41,12 @@ public class SearchActivity extends AppCompatActivity {
         viewPager2.registerOnPageChangeCallback(onPageChange);
         gpsTracker = new GPSTracker(SearchActivity.this);
     }
+
+//    @Override
+//    public void onBackPressed() {
+//        Intent i = new Intent(getApplicationContext(), MainActivity.class);
+//        startActivity(i);
+//    }
 
     private TabLayout.OnTabSelectedListener onTabSelected = new TabLayout.OnTabSelectedListener() {
         @Override
