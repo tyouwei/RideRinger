@@ -7,13 +7,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.google.android.material.tabs.TabLayout;
 
@@ -34,8 +28,7 @@ public class SearchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-        Intent intent = getIntent();
-        this.busStops = (ArrayList<String>) intent.getSerializableExtra("Bus Stop Array");
+        this.busStops = getIntent().getStringArrayListExtra("Bus Stop Array");
 
         this.tabLayout = findViewById(R.id.tablayout);
         this.viewPager2 = findViewById(R.id.viewpager);
