@@ -96,7 +96,7 @@ public class LoadingScreen extends AppCompatActivity {
                 complete = false;
             }
             if (complete) {
-                Log.e("REST API", new Integer(buses.size()).toString());
+                Log.d("REST API", "Number of buses: " + new Integer(buses.size()));
                 return buses;
             }
         }
