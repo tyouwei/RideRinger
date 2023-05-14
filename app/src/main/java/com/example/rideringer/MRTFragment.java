@@ -43,8 +43,7 @@ public class MRTFragment extends Fragment {
         // As of now, station names are written in the Log Cat
         ExcelFileReader fileReader = new ExcelFileReader();
         Sheet stationSheet = fileReader.readExcelFromStorage(getContext(), "mrt_lrt_stations.xls");
-        stations = fileReader.populateOnLineCode(stationSheet, "NSL");
-        Log.d("STATIONS", String.valueOf(fileReader.populateOnLineCode(stationSheet, "EWL").size()));
+        stations = fileReader.populateOnLineCode(stationSheet, "NEL");
         for (Pair pair: stations) {
             Log.d("STATIONS", pair.first.toString() + ", " + pair.second.toString());
         }
@@ -55,6 +54,7 @@ public class MRTFragment extends Fragment {
     @Override
     public void onDestroyView() {
         db.close();
+        stations.clear();
         super.onDestroyView();
     }
 
