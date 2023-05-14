@@ -1,5 +1,6 @@
 package com.example.rideringer;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -49,8 +50,13 @@ public class BusFragment extends Fragment {
         v.findViewById(R.id.bus_alarm).setOnClickListener(onAlarm);
         buses = getArguments().getStringArrayList("Bus Stops");
 
-        if (!buses.isEmpty()) {
+        // Sorts the bus stops fetched from Data Mall and deals with exception by reloading
+        try {
             buses.sort(Comparator.naturalOrder());
+        } catch (NullPointerException e) {
+            Log.e("NullPointerException", String.valueOf(e));
+            Intent i = new Intent(getActivity(), LoadingScreen.class);
+            startActivity(i);
         }
 
         // For the drop-down list
