@@ -5,6 +5,8 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,10 +14,17 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 
+import org.apache.poi.ss.usermodel.Sheet;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 public class MRTFragment extends Fragment {
     private String[] mrt= {"Woodlands", "Yishun", "Choa Chu Kang"};
     AutoCompleteTextView autoCompleteTextView;
     ArrayAdapter<String> adapterItems;
+
+    ArrayList<Pair<String, String>> stations;
     private Database db;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -29,6 +38,17 @@ public class MRTFragment extends Fragment {
         adapterItems = new ArrayAdapter<>(getContext(), R.layout.drop_down_item, mrt);
         autoCompleteTextView.setAdapter(adapterItems);
         autoCompleteTextView.setOnItemClickListener(onClick);
+
+        // Test of Excel File Reader Functionality
+        // As of now, station names are written in the Log Cat
+        ExcelFileReader fileReader = new ExcelFileReader();
+        Sheet stationSheet = fileReader.readExcelFromStorage(getContext(), "mrt_lrt_stations.xls");
+        stations = fileReader.populateOnLineCode(stationSheet, "NSL");
+        Log.d("STATIONS", String.valueOf(fileReader.populateOnLineCode(stationSheet, "EWL").size()));
+        for (Pair pair: stations) {
+            Log.d("STATIONS", pair.first.toString() + ", " + pair.second.toString());
+        }
+
         return v;
     }
 
