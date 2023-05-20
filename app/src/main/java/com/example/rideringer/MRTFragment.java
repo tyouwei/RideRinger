@@ -1,19 +1,20 @@
 package com.example.rideringer;
 
-import android.content.Intent;
 import android.os.Bundle;
-
 import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 public class MRTFragment extends Fragment {
-    private String[] mrt= {"Woodlands", "Yishun", "Choa Chu Kang"};
+    private ArrayList<String> mrt = new ArrayList<>();
     AutoCompleteTextView autoCompleteTextView;
     ArrayAdapter<String> adapterItems;
     private Database db;
@@ -25,6 +26,31 @@ public class MRTFragment extends Fragment {
         this.db = new Database(getActivity());
         v.findViewById(R.id.mrt_save).setOnClickListener(onSave);
         v.findViewById(R.id.mrt_alarm).setOnClickListener(onAlarm);
+
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(
+                    new InputStreamReader(
+                            getContext().getAssets().open("mrt_lrt_stations.csv"), "UTF-8"));
+
+            // do reading, usually loop until end of file reading
+            String mLine;
+            while ((mLine = reader.readLine()) != null) {
+                String[] row = mLine.split(",");
+                mrt.add(row[3]);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
         autoCompleteTextView = v.findViewById(R.id.mrt_drop_list);
         adapterItems = new ArrayAdapter<>(getContext(), R.layout.drop_down_item, mrt);
         autoCompleteTextView.setAdapter(adapterItems);

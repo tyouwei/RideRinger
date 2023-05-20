@@ -1,0 +1,211 @@
+1,EWL,EW1,Pasir Ris
+2,EWL,EW2,Tampines
+3,EWL,EW3,Simei
+4,EWL,EW4,Tanah Merah
+5,EWL,EW5,Bedok
+6,EWL,EW6,Kembangan
+7,EWL,EW7,Eunos
+8,EWL,EW8,Paya Lebar
+9,EWL,EW9,Aljunied
+10,EWL,EW10,Kallang
+11,EWL,EW11,Lavender
+12,EWL,EW12,Bugis
+13,EWL,EW13,City Hall
+14,EWL,EW14,Raffles Place
+15,EWL,EW15,Tanjong Pagar
+16,EWL,EW16,Outram Park
+17,EWL,EW17,Tiong Bahru
+18,EWL,EW18,Redhill
+19,EWL,EW19,Queenstown
+20,EWL,EW20,Commonwealth
+21,EWL,EW21,Buona Vista
+22,EWL,EW22,Dover
+23,EWL,EW23,Clementi
+24,EWL,EW24,Jurong East
+25,EWL,EW25,Chinese Garden
+26,EWL,EW26,Lakeside
+27,EWL,EW27,Boon Lay
+28,EWL,EW28,Pioneer
+29,EWL,EW29,Joo Koon
+30,EWL,EW30,Gul Circle
+31,EWL,EW31,Tuas Cresent
+32,EWL,EW32,Tuas West Road
+33,EWL,EW33,Tuas Link
+34,EWL,CG,Tanah Merah
+35,EWL,CG1,Expo
+36,EWL,CG2,Changi Airport
+37,NSL,NS1,Jurong East
+38,NSL,NS2,Bukit Batok
+39,NSL,NS3,Bukit Gombak
+40,NSL,NS4,Choa Chu Kang
+41,NSL,NS5,Yew Tee
+42,NSL,NS6,Kranji
+43,NSL,NS7,NIL
+44,NSL,NS8,Marsiling
+45,NSL,NS9,Woodlands
+46,NSL,NS10,Admiratly
+47,NSL,NS11,Sembawang
+48,NSL,NS12,Canberra
+49,NSL,NS13,Yishun
+50,NSL,NS14,Khatib
+51,NSL,NS15,Yio Chu Kang
+52,NSL,NS16,Ang Mo Kio
+53,NSL,NS17,Bishan
+54,NSL,NS18,Braddell
+55,NSL,NS19,Toa Payoh
+56,NSL,NS20,Novena
+57,NSL,NS21,Newton
+58,NSL,NS22,Orchard
+59,NSL,NS23,Somerset
+60,NSL,NS24,Dhoby Ghaut
+61,NSL,NS25,City Hall
+62,NSL,NS26,Raffles Place
+63,NSL,NS27,Marina Bay
+64,NSL,NS28,Marina South Pier
+65,NEL,NE1,HabourFront
+66,NEL,NE2,NIL
+67,NEL,NE3,Outram Park
+68,NEL,NE4,Chinatown
+69,NEL,NE5,Clarke Quay
+70,NEL,NE6,Dhoby Ghaut
+71,NEL,NE7,Little India
+72,NEL,NE8,Farrer Park
+73,NEL,NE9,Boon Keng
+74,NEL,NE10,Potong Pasir
+75,NEL,NE11,Woodleigh
+76,NEL,NE12,Serangoon
+77,NEL,NE13,Kovan
+78,NEL,NE14,Hougang
+79,NEL,NE15,Buangkok
+80,NEL,NE16,Sengkang
+81,NEL,NE17,Punggol
+82,CCL,CC1,Dhoby Ghaut
+83,CCL,CC2,Bras Basah
+84,CCL,CC3,Esplanade
+85,CCL,CC4,Promenade
+86,CCL,CC5,Nicoll Highway
+87,CCL,CC6,Stadium
+88,CCL,CC7,Mountbatten
+89,CCL,CC8,Dakota
+90,CCL,CC9,Paya Lebar
+91,CCL,CC10,MacPherson
+92,CCL,CC11,Tai Seng
+93,CCL,CC12,Bartley
+94,CCL,CC13,Serangoon
+95,CCL,CC14,Lorong Chuan
+96,CCL,CC15,Bishan
+97,CCL,CC16,Marymount
+98,CCL,CC17,Caldecott
+99,CCL,CC18,NIL
+100,CCL,CC19,Botanic Gardens
+101,CCL,CC20,Farrer Road
+102,CCL,CC21,Holland Village
+103,CCL,CC22,Buona Vista
+104,CCL,CC23,one-north
+105,CCL,CC24,Kent Ridge
+106,CCL,CC25,Haw Par Villa
+107,CCL,CC26,Pasir Panjang
+108,CCL,CC27,Labrador Park
+109,CCL,CC28,Telok Blangah
+110,CCL,CC29,HabourFront
+111,CCL,CE1,Bayfront
+112,CCL,CE2,Marina Bay
+113,DTL,DT1,Bukit Panjang
+114,DTL,DT2,Cashew
+115,DTL,DT3,Hillview
+116,DTL,DT4,NIL
+117,DTL,DT5,Beauty World
+118,DTL,DT6,King Albert Park
+119,DTL,DT7,Sixth Avenue
+120,DTL,DT8,Tan Kah Kee
+121,DTL,DT9,Botanic Gardens
+122,DTL,DT10,Stevens
+123,DTL,DT11,Newton
+124,DTL,DT12,Little India
+125,DTL,DT13,Rochor
+126,DTL,DT14,Bugis
+127,DTL,DT15,Promenade
+128,DTL,DT16,Bayfront
+129,DTL,DT17,Downtown
+130,DTL,DT18,Telok Ayer
+131,DTL,DT19,Chinatown
+132,DTL,DT20,Fort Canning
+133,DTL,DT21,Bencoolen
+134,DTL,DT22,Jalan Besar
+135,DTL,DT23,Bendemeer
+136,DTL,DT24,Geylang Bahru
+137,DTL,DT25,Mattar
+138,DTL,DT26,MacPherson
+139,DTL,DT27,Ubi
+140,DTL,DT28,Kaki Bukit
+141,DTL,DT29,Bedok North
+142,DTL,DT30,Bedok Reservoir
+143,DTL,DT31,Tampines West
+144,DTL,DT32,Tampines
+145,DTL,DT33,Tampines East
+146,DTL,DT34,Upper Changi
+147,DTL,DT35,Changi Airport
+148,TEL,TE1,Woodlands North
+149,TEL,TE2,Woodlands
+150,TEL,TE3,Woodlands South
+151,TEL,TE4,Springleaf
+152,TEL,TE5,Lentor
+153,TEL,TE6,Mayflower
+154,TEL,TE7,Bright Hill
+155,TEL,TE8,Upper Thomson
+156,TEL,TE9,Caldecott
+157,TEL,TE10,NIL
+158,TEL,TE11,Stevens
+159,TEL,TE12,Napier
+160,TEL,TE13,Orchard Boulevard
+161,TEL,TE14,Orchard
+162,TEL,TE15,Great World
+163,TEL,TE16,Havelock
+164,TEL,TE17,Outram Park
+165,TEL,TE18,Maxwell
+166,TEL,TE19,Shenton Way
+167,TEL,TE20,Marina Bay
+168,TEL,TE21,Marina South
+169,TEL,TE22,Gardens by the Bay
+170,BPL,BP1,Choa Chu Kang
+171,BPL,BP2,South View
+172,BPL,BP3,Keat Hong
+173,BPL,BP4,Teck Whye
+174,BPL,BP5,Phoenix
+175,BPL,BP6,Bukit Panjang
+176,BPL,BP7,Petir
+177,BPL,BP8,Pending
+178,BPL,BP9,Bangkit
+179,BPL,BP10,Fajar
+180,BPL,BP11,Segar
+181,BPL,BP12,Jelapang
+182,BPL,BP13,Senja
+183,SKL,STC,Sengkang
+184,SKL,SE1,Compassvale
+185,SKL,SE2,Rumbia
+186,SKL,SE3,Bakau
+187,SKL,SE4,Kangkar
+188,SKL,SE5,Ranggung
+189,SKL,SW1,Cheng Lim
+190,SKL,SW2,Farmway
+191,SKL,SW3,Kupang
+192,SKL,SW4,Thanggam
+193,SKL,SW5,Fernvale
+194,SKL,SW6,Layar
+195,SKL,SW7,Tongkang
+196,SKL,SW8,Renjong
+197,PGL,PTC,Punggol
+198,PGL,PE1,Cove
+199,PGL,PE2,Meridian
+200,PGL,PE3,Coral Edge
+201,PGL,PE4,Riviera
+202,PGL,PE5,Kadaloor
+203,PGL,PE6,Oasis
+204,PGL,PE7,Damai
+205,PGL,PW1,Sam Kee
+206,PGL,PW2,Teck Lee
+207,PGL,PW3,Punggol Point
+208,PGL,PW4,Samudera
+209,PGL,PW5,Nibong
+210,PGL,PW6,Sumang
+211,PGL,PW7,Soo Teck
