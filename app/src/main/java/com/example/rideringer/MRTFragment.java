@@ -37,7 +37,7 @@ public class MRTFragment extends Fragment {
             String mLine;
             while ((mLine = reader.readLine()) != null) {
                 String[] row = mLine.split(",");
-                mrt.add(row[3]);
+                mrt.add(row[2] + " " + row[3]);
             }
         } catch (IOException e) {
             e.printStackTrace();
