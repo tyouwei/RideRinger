@@ -42,7 +42,7 @@ public class BusFragment extends Fragment {
 
         // For the drop-down list
         autoCompleteTextView = v.findViewById(R.id.bus_drop_list);
-        adapterItems = new ArrayAdapter<>(getContext(), R.layout.drop_down_item, buses);
+        adapterItems = new ArrayAdapter<>(getContext(), R.layout.bus_drop_down_item, buses);
         autoCompleteTextView.setAdapter(adapterItems);
         autoCompleteTextView.setOnItemClickListener(onClick);
 

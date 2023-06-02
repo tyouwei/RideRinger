@@ -2,6 +2,8 @@ package com.example.rideringer;
 
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,9 +16,9 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class MRTFragment extends Fragment {
-    private ArrayList<String> mrt = new ArrayList<>();
+    private ArrayList<MrtLrtModelClass> mrt = new ArrayList<>();
     AutoCompleteTextView autoCompleteTextView;
-    ArrayAdapter<String> adapterItems;
+    MrtLrtAdapter adapterItems;
     private Database db;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -37,7 +39,16 @@ public class MRTFragment extends Fragment {
             String mLine;
             while ((mLine = reader.readLine()) != null) {
                 String[] row = mLine.split(",");
-                mrt.add(row[2] + " " + row[3]);
+                int stnLogo = row[1].equals("EWL") ?
+                        R.drawable.ewl_img : row[1].equals("NSL") ?
+                        R.drawable.nsl_img : row[1].equals("NEl") ?
+                        R.drawable.nel_img : row[1].equals("CCL") ?
+                        R.drawable.ccl_img : row[1].equals("DTL") ?
+                        R.drawable.dtl_img : row[1].equals("TEL") ?
+                        R.drawable.tel_img : row[1].equals("BPL") ?
+                        R.drawable.bp_img : row[1].equals("SKL") ?
+                        R.drawable.sk_img : R.drawable.pg_img;
+                mrt.add(new MrtLrtModelClass(row[2] + " " + row[3], stnLogo));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -52,7 +63,7 @@ public class MRTFragment extends Fragment {
         }
 
         autoCompleteTextView = v.findViewById(R.id.mrt_drop_list);
-        adapterItems = new ArrayAdapter<>(getContext(), R.layout.drop_down_item, mrt);
+        adapterItems = new MrtLrtAdapter(mrt, getContext());
         autoCompleteTextView.setAdapter(adapterItems);
         autoCompleteTextView.setOnItemClickListener(onClick);
         return v;
@@ -67,7 +78,7 @@ public class MRTFragment extends Fragment {
     private View.OnClickListener onSave = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            //db.insert(nameStr, addrStr);
+            //db.insert(nameStr, addStr);
         }
     };
 
