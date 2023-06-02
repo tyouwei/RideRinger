@@ -7,15 +7,20 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.widget.ProgressBar;
+
+import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -36,16 +41,16 @@ public class LoadingScreen extends AppCompatActivity {
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
-                ArrayList<String> arr = fetchBusStops();
-                onFinishLoad(arr);
+                Pair<ArrayList<String>, HashMap<String, LatLng>> pair = fetchBusStops();
+                onFinishLoad(pair.first, pair.second);
             }
         });
     }
 
-    private ArrayList<String> fetchBusStops() {
+    private Pair<ArrayList<String>, HashMap<String, LatLng>> fetchBusStops() {
         ArrayList<String> buses = new ArrayList<>();
+        HashMap<String, LatLng> locationMap = new HashMap<>();
         ArrayList<Void> completedList = new ArrayList<>();
-        buses.add("");
         int numOfCalls = 11;
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();
@@ -59,14 +64,17 @@ public class LoadingScreen extends AppCompatActivity {
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String responseBody = response.body().string();
-                    Log.d("REST API", "Response is successful: " + responseBody);
+                    //Log.d("REST API", "Response is successful: " + responseBody);
                     try {
                         JSONArray obj = new JSONObject(responseBody)
                                 .getJSONArray("value");
                         int len = obj.length();
                         for (int i = 0; i < len; i++) {
-                            buses.add(obj.getJSONObject(i).getString("Description"));
-                            //Log.e("REST API", new Integer(buses.size()).toString());
+                            String name = obj.getJSONObject(i).getString("Description");
+                            double lat = obj.getJSONObject(i).getDouble("Latitude");
+                            double lon = obj.getJSONObject(i).getDouble("Longitude");
+                            buses.add(name);
+                            locationMap.put(name, new LatLng(lat, lon));
                         }
                         completedList.add(null);
                     } catch (JSONException e) {
@@ -97,14 +105,15 @@ public class LoadingScreen extends AppCompatActivity {
             }
             if (complete) {
                 Log.d("REST API", "Number of buses: " + new Integer(buses.size()));
-                return buses;
+                return new Pair<>(buses, locationMap);
             }
         }
     }
 
-    private void onFinishLoad(ArrayList<String> arr) {
+    private void onFinishLoad(ArrayList<String> arr, HashMap<String, LatLng> map) {
         Intent i = new Intent(getApplicationContext(), SearchActivity.class);
-        i.putExtra("Bus Stop Array", arr);
+        i.putExtra("BUS_STOP_ARRAY", arr);
+        i.putExtra("LOCATION_DETAILS_HASHMAP", map);
         startActivity(i);
         finish();
     }

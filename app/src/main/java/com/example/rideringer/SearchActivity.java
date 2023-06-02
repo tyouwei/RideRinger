@@ -9,9 +9,11 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import android.os.Bundle;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class SearchActivity extends AppCompatActivity {
 
@@ -20,15 +22,15 @@ public class SearchActivity extends AppCompatActivity {
     private TransportTabAdapter ttAdapter;
     private GPSTracker gpsTracker;
     private ArrayList<String> busStops;
-    private double latitude = 0.0d;
-    private double longitude = 0.0d;
+    private HashMap<String, LatLng> locationMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-        this.busStops = getIntent().getStringArrayListExtra("Bus Stop Array");
+        this.busStops = getIntent().getStringArrayListExtra("BUS_STOP_ARRAY");
+        this.locationMap = (HashMap<String, LatLng>) getIntent().getSerializableExtra("LOCATION_DETAILS_HASHMAP");
 
         this.tabLayout = findViewById(R.id.tablayout);
         this.viewPager2 = findViewById(R.id.viewpager);
@@ -81,7 +83,8 @@ public class SearchActivity extends AppCompatActivity {
         public Fragment createFragment(int position) {
             BusFragment busFragment = new BusFragment();
             Bundle bundle = new Bundle();
-            bundle.putStringArrayList("Bus Stops", busStops);
+            bundle.putStringArrayList("BUS_STOP_ARRAY", busStops);
+            bundle.putSerializable("LOCATION_DETAILS_HASHMAP", locationMap);
             busFragment.setArguments(bundle);
 
             switch (position) {
