@@ -12,24 +12,33 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Toast;
+
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
+
 public class BusFragment extends Fragment {
-    AutoCompleteTextView autoCompleteTextView;
-    ArrayAdapter<String> adapterItems;
-    ArrayList<String> buses;
+    private AutoCompleteTextView autoCompleteTextView;
+    private ArrayAdapter<String> adapterItems;
+    private ArrayList<String> buses;
+    private String nameStr;
+    private HashMap<String, LatLng> locationMap;
     private Database db;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_bus, container, false);
-        this.db = new Database(getActivity());
+        this.db = new Database(getContext());
 
 
         v.findViewById(R.id.bus_save).setOnClickListener(onSave);
         v.findViewById(R.id.bus_alarm).setOnClickListener(onAlarm);
-        buses = getArguments().getStringArrayList("Bus Stops");
+        buses = getArguments().getStringArrayList("BUS_STOP_ARRAY");
+        locationMap = (HashMap<String, LatLng>) getArguments().getSerializable("LOCATION_DETAILS_HASHMAP");
 
         // Sorts the bus stops fetched from Data Mall and deals with exception by reloading
         try {
@@ -72,7 +81,9 @@ public class BusFragment extends Fragment {
     private AdapterView.OnItemClickListener onClick = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            String item = parent.getItemAtPosition(position).toString();
+            nameStr = parent.getItemAtPosition(position).toString();
+
+            Toast.makeText(getActivity(), "" + locationMap.get(nameStr).latitude, Toast.LENGTH_LONG).show();
         }
     };
 }
