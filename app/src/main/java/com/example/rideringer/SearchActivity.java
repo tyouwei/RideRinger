@@ -85,8 +85,6 @@ public class SearchActivity extends AppCompatActivity {
             busFragment.setArguments(bundle);
 
             switch (position) {
-                case 0:
-                    return busFragment;
                 case 1:
                     return new MRTFragment();
                 default:
