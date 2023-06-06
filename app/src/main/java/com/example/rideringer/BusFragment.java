@@ -37,8 +37,10 @@ public class BusFragment extends Fragment {
 
         v.findViewById(R.id.bus_save).setOnClickListener(onSave);
         v.findViewById(R.id.bus_alarm).setOnClickListener(onAlarm);
-        buses = getArguments().getStringArrayList("BUS_STOP_ARRAY");
-        locationMap = (HashMap<String, LatLng>) getArguments().getSerializable("LOCATION_DETAILS_HASHMAP");
+
+        LocationDetails details = (LocationDetails) getActivity().getApplication();
+        buses = details.getBuses();
+        locationMap = details.getHashmap();
 
         // Sorts the bus stops fetched from Data Mall and deals with exception by reloading
         try {

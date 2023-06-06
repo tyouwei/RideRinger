@@ -8,10 +8,12 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.os.Bundle;
+import android.os.Parcelable;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.tabs.TabLayout;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -21,16 +23,11 @@ public class SearchActivity extends AppCompatActivity {
     private ViewPager2 viewPager2;
     private TransportTabAdapter ttAdapter;
     private GPSTracker gpsTracker;
-    private ArrayList<String> busStops;
-    private HashMap<String, LatLng> locationMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
-
-        this.busStops = getIntent().getStringArrayListExtra("BUS_STOP_ARRAY");
-        this.locationMap = (HashMap<String, LatLng>) getIntent().getSerializableExtra("LOCATION_DETAILS_HASHMAP");
 
         this.tabLayout = findViewById(R.id.tablayout);
         this.viewPager2 = findViewById(R.id.viewpager);
@@ -82,10 +79,6 @@ public class SearchActivity extends AppCompatActivity {
         @Override
         public Fragment createFragment(int position) {
             BusFragment busFragment = new BusFragment();
-            Bundle bundle = new Bundle();
-            bundle.putStringArrayList("BUS_STOP_ARRAY", busStops);
-            bundle.putSerializable("LOCATION_DETAILS_HASHMAP", locationMap);
-            busFragment.setArguments(bundle);
 
             switch (position) {
                 case 0:

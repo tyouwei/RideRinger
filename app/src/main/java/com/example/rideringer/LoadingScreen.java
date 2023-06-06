@@ -41,13 +41,13 @@ public class LoadingScreen extends AppCompatActivity {
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
-                Pair<ArrayList<String>, HashMap<String, LatLng>> pair = fetchBusStops();
-                onFinishLoad(pair.first, pair.second);
+                fetchBusStops();
+                onFinishLoad();
             }
         });
     }
 
-    private Pair<ArrayList<String>, HashMap<String, LatLng>> fetchBusStops() {
+    private void fetchBusStops() {
         ArrayList<String> buses = new ArrayList<>();
         HashMap<String, LatLng> locationMap = new HashMap<>();
         ArrayList<Void> completedList = new ArrayList<>();
@@ -105,15 +105,15 @@ public class LoadingScreen extends AppCompatActivity {
             }
             if (complete) {
                 Log.d("REST API", "Number of buses: " + new Integer(buses.size()));
-                return new Pair<>(buses, locationMap);
+                LocationDetails details = (LocationDetails) getApplication();
+                details.updateDetails(buses, locationMap);
+                return;
             }
         }
     }
 
-    private void onFinishLoad(ArrayList<String> arr, HashMap<String, LatLng> map) {
+    private void onFinishLoad() {
         Intent i = new Intent(getApplicationContext(), SearchActivity.class);
-        i.putExtra("BUS_STOP_ARRAY", arr);
-        i.putExtra("LOCATION_DETAILS_HASHMAP", map);
         startActivity(i);
         finish();
     }
