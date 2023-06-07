@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,8 +25,7 @@ public class BusFragment extends Fragment {
     private AutoCompleteTextView autoCompleteTextView;
     private ArrayAdapter<String> adapterItems;
     private ArrayList<String> buses;
-    private String nameStr;
-    private HashMap<String, LatLng> locationMap;
+    private HashMap<String, Pair<String, LatLng>> locationMap;
     private Database db;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -69,7 +69,16 @@ public class BusFragment extends Fragment {
     private View.OnClickListener onSave = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            //db.insert(nameStr, addStr);
+            String nameStr = autoCompleteTextView.getText().toString();
+            Pair<String, LatLng> pair = locationMap.get(nameStr);
+            if (pair != null) {
+                String descStr = pair.first;
+                double lat = pair.second.latitude;
+                double lon = pair.second.longitude;
+                db.insert(nameStr, descStr, lat, lon);
+            } else {
+                Toast.makeText(getContext(), "Please Select a Bus Stop", Toast.LENGTH_SHORT);
+            }
         }
     };
 
@@ -83,9 +92,6 @@ public class BusFragment extends Fragment {
     private AdapterView.OnItemClickListener onClick = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            nameStr = parent.getItemAtPosition(position).toString();
-
-            Toast.makeText(getActivity(), "" + locationMap.get(nameStr).latitude, Toast.LENGTH_LONG).show();
         }
     };
 }

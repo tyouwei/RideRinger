@@ -49,7 +49,7 @@ public class LoadingScreen extends AppCompatActivity {
 
     private void fetchBusStops() {
         ArrayList<String> buses = new ArrayList<>();
-        HashMap<String, LatLng> locationMap = new HashMap<>();
+        HashMap<String, Pair<String, LatLng>> locationMap = new HashMap<>();
         ArrayList<Void> completedList = new ArrayList<>();
         int numOfCalls = 11;
         OkHttpClient client = new OkHttpClient().newBuilder()
@@ -71,10 +71,11 @@ public class LoadingScreen extends AppCompatActivity {
                         int len = obj.length();
                         for (int i = 0; i < len; i++) {
                             String name = obj.getJSONObject(i).getString("Description");
+                            String desc = obj.getJSONObject(i).getString("RoadName");
                             double lat = obj.getJSONObject(i).getDouble("Latitude");
                             double lon = obj.getJSONObject(i).getDouble("Longitude");
                             buses.add(name);
-                            locationMap.put(name, new LatLng(lat, lon));
+                            locationMap.put(name, new Pair<>(desc, new LatLng(lat, lon)));
                         }
                         completedList.add(null);
                     } catch (JSONException e) {
