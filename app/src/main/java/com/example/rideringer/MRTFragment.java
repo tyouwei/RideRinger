@@ -92,7 +92,7 @@ public class MRTFragment extends Fragment {
     private AdapterView.OnItemClickListener onClick = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            String item = parent.getItemAtPosition(position).toString();
+            MrtLrtModelClass item = (MrtLrtModelClass) parent.getItemAtPosition(position);
         }
     };
 }

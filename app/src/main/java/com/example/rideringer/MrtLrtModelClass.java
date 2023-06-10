@@ -26,4 +26,9 @@ public class MrtLrtModelClass {
     public void setStnLogo(int stnLogo) {
         this.stnLogo = stnLogo;
     }
+
+    @Override
+    public String toString() {
+        return getStnName();
+    }
 }
