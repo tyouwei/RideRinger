@@ -1,10 +1,12 @@
 package com.example.rideringer;
 
+import android.app.Application;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.Toast;
 
 public class Database extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "locationlist.db";
@@ -33,7 +35,7 @@ public class Database extends SQLiteOpenHelper {
     public Cursor getAll() {
         return getReadableDatabase()
                 .rawQuery(
-                        "SELECT _id, locationName, locationAddress " +
+                        "SELECT _id, locationName, locationAddress, lat, lon " +
                                 "FROM locations_table " +
                                 "ORDER BY locationName", null);
     }
@@ -69,11 +71,11 @@ public class Database extends SQLiteOpenHelper {
         return c.getString(2);
     }
 
-    public String getLatitude(Cursor c) {
-        return c.getString(3);
+    public double getLatitude(Cursor c) {
+        return c.getDouble(3);
     }
 
-    public String getLongitude(Cursor c) {
-        return c.getString(4);
+    public double getLongitude(Cursor c) {
+        return c.getDouble(4);
     }
 }

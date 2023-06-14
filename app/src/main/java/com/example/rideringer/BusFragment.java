@@ -77,7 +77,7 @@ public class BusFragment extends Fragment {
                 double lon = pair.second.longitude;
                 db.insert(nameStr, descStr, lat, lon);
             } else {
-                Toast.makeText(getContext(), "Please Select a Bus Stop", Toast.LENGTH_SHORT);
+                Toast.makeText(getContext(), "Please Select a Bus Stop", Toast.LENGTH_SHORT).show();
             }
         }
     };

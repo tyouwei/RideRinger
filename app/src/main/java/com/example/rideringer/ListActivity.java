@@ -37,7 +37,10 @@ public class ListActivity extends AppCompatActivity {
     private AdapterView.OnItemClickListener onListClick = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            //CREATE A POP UP TO CONFIRM SETTING OF ALARM
+            model.moveToPosition(position);
+            double lat = db.getLatitude(model);
+            double lon = db.getLongitude(model);
+            //SETTING OF ALARM
         }
     };
 
