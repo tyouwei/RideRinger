@@ -25,6 +25,18 @@ public class SettingsActivity extends AppCompatActivity {
         initSwitchListener();
     }
 
+    @Override
+    protected void onResume() {
+        SharedPreferences prefs = getSharedPreferences(UserSettings.PREFERENCES, MODE_PRIVATE);
+        if (prefs.getBoolean(UserSettings.NOTIFICATION_SETTINGS, false)) {
+            banner.setChecked(true);
+        }
+        if (prefs.getBoolean(UserSettings.ALARM_SETTINGS, false)) {
+            alarm.setChecked(true);
+        }
+        super.onResume();
+    }
+
     private void initSwitchListener() {
         banner.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -32,10 +44,6 @@ public class SettingsActivity extends AppCompatActivity {
                 SharedPreferences.Editor editor = getSharedPreferences(UserSettings.PREFERENCES, MODE_PRIVATE).edit();
                 editor.putBoolean(UserSettings.NOTIFICATION_SETTINGS, isChecked);
                 editor.apply();
-                SharedPreferences test = getSharedPreferences(UserSettings.PREFERENCES,MODE_PRIVATE);
-                boolean bool = test.getBoolean(UserSettings.NOTIFICATION_SETTINGS, true);
-                String bool2 = new Boolean(bool).toString();
-                Toast.makeText(getApplicationContext(), bool2, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -46,9 +54,6 @@ public class SettingsActivity extends AppCompatActivity {
                 editor.putBoolean(UserSettings.ALARM_SETTINGS, isChecked);
                 editor.apply();
                 SharedPreferences test = getSharedPreferences(UserSettings.PREFERENCES,MODE_PRIVATE);
-                boolean bool = test.getBoolean(UserSettings.ALARM_SETTINGS, true);
-                String bool2 = new Boolean(bool).toString();
-                Toast.makeText(getApplicationContext(), bool2, Toast.LENGTH_SHORT).show();
             }
         });
 

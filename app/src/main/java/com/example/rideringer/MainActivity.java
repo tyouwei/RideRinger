@@ -2,12 +2,16 @@ package com.example.rideringer;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Application;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -19,7 +23,21 @@ public class MainActivity extends AppCompatActivity {
     private  SharedPreferences.OnSharedPreferenceChangeListener onChange = new SharedPreferences.OnSharedPreferenceChangeListener() {
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            //TODO
+            Toast.makeText(getApplicationContext(), key, Toast.LENGTH_SHORT).show();
+            if (key == getString(R.string.alarm_notification) || key == getString(R.string.banner_notification)) {
+                boolean enabled = prefs.getBoolean(key, false);
+                int flag = (enabled
+                        ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+                        : PackageManager.COMPONENT_ENABLED_STATE_DISABLED);
+                ComponentName componentName = new ComponentName(MainActivity.this, OnBootReceiver.class);
+                getPackageManager().setComponentEnabledSetting(componentName, flag, PackageManager.DONT_KILL_APP);
+
+                if (enabled) {
+                    OnBootReceiver.setAlarm(MainActivity.this);
+                } else {
+                    OnBootReceiver.cancelAlarm(MainActivity.this);
+                }
+            }
         }
     };
     @Override
@@ -32,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
         settingsButton = findViewById(R.id.settings);
         gpsTracker = new GPSTracker(MainActivity.this);
         prefs = getSharedPreferences(UserSettings.PREFERENCES, MODE_PRIVATE);
+        prefs.registerOnSharedPreferenceChangeListener(onChange);
 
         saveButton.setOnClickListener(onSave);
         searchButton.setOnClickListener(onSearch);

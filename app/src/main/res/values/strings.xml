@@ -6,4 +6,6 @@
 
     <string name="select_bus"> Bus Stop</string>
     <string name="select_mrt"> MRT Station</string>
+    <string name="alarm_notification"> Alarm</string>
+    <string name="banner_notification"> Banner</string>
 </resources>
