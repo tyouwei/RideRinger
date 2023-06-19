@@ -30,12 +30,10 @@
         <activity
             android:name=".LoadingScreen"
             android:exported="false" />
-
         <service
             android:name=".GPSTracker"
             android:enabled="false"
             android:exported="false" />
-
         <activity
             android:name=".SearchActivity"
             android:exported="false" />
@@ -54,7 +52,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+        <receiver
+            android:name=".OnBootReceiver"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name=".AlarmReceiver"
+            android:enabled="true"
+            android:exported="true" />
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />

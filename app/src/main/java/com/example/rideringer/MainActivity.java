@@ -13,33 +13,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private Button searchButton;
     private Button saveButton;
     private Button settingsButton;
     private GPSTracker gpsTracker;
-    private SharedPreferences prefs = null;
-    private  SharedPreferences.OnSharedPreferenceChangeListener onChange = new SharedPreferences.OnSharedPreferenceChangeListener() {
-        @Override
-        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            Toast.makeText(getApplicationContext(), key, Toast.LENGTH_SHORT).show();
-            if (key == getString(R.string.alarm_notification) || key == getString(R.string.banner_notification)) {
-                boolean enabled = prefs.getBoolean(key, false);
-                int flag = (enabled
-                        ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED
-                        : PackageManager.COMPONENT_ENABLED_STATE_DISABLED);
-                ComponentName componentName = new ComponentName(MainActivity.this, OnBootReceiver.class);
-                getPackageManager().setComponentEnabledSetting(componentName, flag, PackageManager.DONT_KILL_APP);
 
-                if (enabled) {
-                    OnBootReceiver.setAlarm(MainActivity.this);
-                } else {
-                    OnBootReceiver.cancelAlarm(MainActivity.this);
-                }
-            }
-        }
-    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,8 +29,6 @@ public class MainActivity extends AppCompatActivity {
         searchButton = findViewById(R.id.find);
         settingsButton = findViewById(R.id.settings);
         gpsTracker = new GPSTracker(MainActivity.this);
-        prefs = getSharedPreferences(UserSettings.PREFERENCES, MODE_PRIVATE);
-        prefs.registerOnSharedPreferenceChangeListener(onChange);
 
         saveButton.setOnClickListener(onSave);
         searchButton.setOnClickListener(onSearch);
@@ -58,21 +36,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
-        prefs.registerOnSharedPreferenceChangeListener(onChange);
-        super.onResume();
+    protected void onStart() {
+        super.onStart();
     }
 
     @Override
-    protected void onPause() {
-        prefs.unregisterOnSharedPreferenceChangeListener(onChange);
-        super.onPause();
+    protected void onStop() {
+        UserSettings.registerSettings(this, this);
+        super.onStop();
     }
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
+        UserSettings.unregisterSettings(this, this);
         gpsTracker.stopUsingGPS();
+        super.onDestroy();
     }
 
     private View.OnClickListener onSave = new View.OnClickListener() {
@@ -98,4 +76,22 @@ public class MainActivity extends AppCompatActivity {
             startActivity(i);
         }
     };
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key == getString(R.string.alarm_notification) || key == getString(R.string.banner_notification)) {
+            boolean enabled = UserSettings.getSettings(MainActivity.this, key);
+            int flag = (enabled
+                    ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+                    : PackageManager.COMPONENT_ENABLED_STATE_DISABLED);
+            ComponentName componentName = new ComponentName(MainActivity.this, OnBootReceiver.class);
+            getPackageManager().setComponentEnabledSetting(componentName, flag, PackageManager.DONT_KILL_APP);
+
+            if (enabled) {
+                OnBootReceiver.setAlarm(MainActivity.this);
+            } else {
+                OnBootReceiver.cancelAlarm(MainActivity.this);
+            }
+        }
+    }
 }

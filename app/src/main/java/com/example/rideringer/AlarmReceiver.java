@@ -17,9 +17,8 @@ import androidx.core.content.ContextCompat;
 public class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        SharedPreferences prefs = context.getSharedPreferences(UserSettings.PREFERENCES, Context.MODE_PRIVATE);
-        boolean useAlarm = prefs.getBoolean(UserSettings.ALARM_SETTINGS, false);
-        boolean useNotification = prefs.getBoolean(UserSettings.NOTIFICATION_SETTINGS, false);
+        boolean useAlarm = UserSettings.getAlarmSettings(context);
+        boolean useNotification = UserSettings.getNotificationSettings(context);
 
         if (useNotification) {
             Intent i = new Intent(context, AlarmActivity.class);

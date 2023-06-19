@@ -11,13 +11,12 @@ import java.util.Calendar;
 public class OnBootReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-
+        setAlarm(context);
     }
 
     public static void setAlarm(Context context) {
         AlarmManager mgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        Calendar cal = Calendar.getInstance();
-        mgr.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), AlarmManager.INTERVAL_DAY, getPendingIntent(context));
+        mgr.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), getPendingIntent(context));
     }
 
     public static void cancelAlarm(Context context) {
