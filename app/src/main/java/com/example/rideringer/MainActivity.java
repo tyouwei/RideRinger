@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+//TODO background service that repeatedly calls getLocation every second and compares it with latlng of destination
 public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private Button searchButton;
@@ -37,13 +38,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     @Override
     protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    protected void onStop() {
         UserSettings.registerSettings(this, this);
-        super.onStop();
+        super.onStart();
     }
 
     @Override

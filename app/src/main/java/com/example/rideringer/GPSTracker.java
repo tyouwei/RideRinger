@@ -13,6 +13,8 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.IBinder;
 import android.provider.Settings;
+import android.widget.Toast;
+
 import androidx.core.app.ActivityCompat;
 
 public class GPSTracker extends Service implements LocationListener {
@@ -23,8 +25,8 @@ public class GPSTracker extends Service implements LocationListener {
     private Location location;
     private double latitude;
     private double longitude;
-    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10;
-    private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1;
+    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 0;
+    private static final long MIN_TIME_BW_UPDATES = 1000;
     protected LocationManager locationManager;
 
     public GPSTracker() {
@@ -149,5 +151,6 @@ public class GPSTracker extends Service implements LocationListener {
     @Override
     public void onLocationChanged(Location location) {
         getLocation();
+        //TODO change this to work in background
     }
 }
