@@ -1,6 +1,11 @@
 package com.example.rideringer;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.work.BackoffPolicy;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
+import androidx.work.WorkRequest;
 
 import android.app.Application;
 import android.content.ComponentName;
@@ -13,13 +18,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import java.util.concurrent.TimeUnit;
+
 //TODO background service that repeatedly calls getLocation every second and compares it with latlng of destination
 public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private Button searchButton;
     private Button saveButton;
     private Button settingsButton;
-    private GPSTracker gpsTracker;
+    private LocationManager locationManager;
+    private WorkRequest backgroundWorkRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +37,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         saveButton = findViewById(R.id.saved);
         searchButton = findViewById(R.id.find);
         settingsButton = findViewById(R.id.settings);
-        gpsTracker = new GPSTracker(MainActivity.this);
+        PermissionsManager.checkGPSPermissions(this);
+        locationManager = LocationManager.getInstance(this);
 
         saveButton.setOnClickListener(onSave);
         searchButton.setOnClickListener(onSearch);
@@ -39,13 +48,15 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     @Override
     protected void onStart() {
         UserSettings.registerSettings(this, this);
+        if (PermissionsManager.permissionsGranted(this)) {
+            startLocationWork();
+        }
         super.onStart();
     }
 
     @Override
     protected void onDestroy() {
         UserSettings.unregisterSettings(this, this);
-        gpsTracker.stopUsingGPS();
         super.onDestroy();
     }
 
@@ -89,5 +100,21 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 OnBootReceiver.cancelAlarm(MainActivity.this);
             }
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (PermissionsManager.permissionsGranted(this)) {
+            startLocationWork();
+        }
+    }
+    private void startLocationWork() {
+        backgroundWorkRequest = new OneTimeWorkRequest.Builder(BackgroundLocation.class)
+                .addTag("LocationWork")
+                .setBackoffCriteria(BackoffPolicy.LINEAR,
+                        OneTimeWorkRequest.MIN_BACKOFF_MILLIS, TimeUnit.SECONDS)
+                .build();
+        WorkManager.getInstance(MainActivity.this).enqueue(backgroundWorkRequest);
     }
 }
