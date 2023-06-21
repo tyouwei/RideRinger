@@ -1,70 +1,95 @@
 package com.example.rideringer;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.Settings;
+import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.PermissionChecker;
 
 public class PermissionsManager {
+    private static PermissionsManager instance = null;
+    private Context context;
 
-    public static void checkGPSPermissions(Context mapCtx) {
-        int finePermit = ActivityCompat.checkSelfPermission(mapCtx, Manifest.permission.ACCESS_FINE_LOCATION);
-        int coarsePermit = ActivityCompat.checkSelfPermission(mapCtx, Manifest.permission.ACCESS_COARSE_LOCATION);
+    private PermissionsManager() {
+    }
 
-        if (finePermit != PackageManager.PERMISSION_GRANTED || coarsePermit != PackageManager.PERMISSION_GRANTED) {
-            showEnablePermissionAlert(mapCtx);
+    public static PermissionsManager getInstance(Context context) {
+        if (instance == null) {
+            instance = new PermissionsManager();
+        }
+        instance.init(context);
+        return instance;
+    }
+
+    private void init(Context context) {
+        this.context = context;
+    }
+
+    public boolean checkPermissions(String[] permissions) {
+        for (int i = 0; i < permissions.length; i++) {
+            if (ContextCompat.checkSelfPermission(context, permissions[i]) == PermissionChecker.PERMISSION_DENIED) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public void askPermissions(Activity activity, String[] permissions, int requestCode) {
+        ActivityCompat.requestPermissions(activity, permissions, requestCode);
+    }
+
+    public boolean handlePermissionResult(Activity activity, int requestCode, String[] permissions, int[] grantResults) {
+        boolean isAllPermissionsGranted = true;
+
+        if (grantResults.length > 0) {
+            for (int i = 0; i < grantResults.length; i++) {
+                if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                    //Toast.makeText(activity, "Permission Granted", Toast.LENGTH_SHORT).show();
+                } else {
+                    isAllPermissionsGranted = false;
+                    //Toast.makeText(activity, "Permission Denied", Toast.LENGTH_SHORT).show();
+                    showPermissionRational(activity, requestCode,permissions, permissions[i]);
+                    break;
+                }
+            }
+        } else {
+            isAllPermissionsGranted = false;
+        }
+        return isAllPermissionsGranted;
+    }
+
+    private void showPermissionRational(Activity activity, int requestCode, String[] permissions, String deniedPermission) {
+        DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    askPermissions(activity, permissions, requestCode);
+                }
+            }
+        };
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(activity, deniedPermission)) {
+                showMessageOKCancel("Allow access to these permissions(s)", listener);
+            }
         }
     }
-
-    public static boolean permissionsGranted(Context mapCtx) {
-        int finePermit = ActivityCompat.checkSelfPermission(mapCtx, Manifest.permission.ACCESS_FINE_LOCATION);
-        int coarsePermit = ActivityCompat.checkSelfPermission(mapCtx, Manifest.permission.ACCESS_COARSE_LOCATION);
-        return finePermit == PackageManager.PERMISSION_GRANTED && coarsePermit == PackageManager.PERMISSION_GRANTED;
-    }
-    private static void showEnablePermissionAlert(Context mapCtx) {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(mapCtx)
-                .setTitle("Location Permission Settings")
-                .setMessage("Location Permission is not enabled. Do you want to go to settings menu?")
-                .setPositiveButton("Settings", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent();
-                        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                        Uri uri = Uri.fromParts("package", BuildConfig.APPLICATION_ID, null);
-                        intent.setData(uri);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        mapCtx.startActivity(intent);
-                    }
-                });
-        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-        alertDialog.show();
-    }
-
-    private static void showEnableLocationAlert(Context mapCtx) {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(mapCtx)
-                .setTitle("Location Service Settings")
-                .setMessage("Location Service is not enabled. Do you want to go to settings menu?")
-                .setCancelable(false)
-                .setPositiveButton("Settings", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                        mapCtx.startActivity(intent);
-                    }
-                });
-        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                dialog.cancel();
-            }
-        });
-        alertDialog.create().show();
+    private void showMessageOKCancel(String msg, DialogInterface.OnClickListener onClickListener) {
+        new AlertDialog.Builder(context)
+                .setMessage(msg)
+                .setPositiveButton("Ok", onClickListener)
+                .setNegativeButton("Cancel", onClickListener)
+                .create()
+                .show();
     }
 }

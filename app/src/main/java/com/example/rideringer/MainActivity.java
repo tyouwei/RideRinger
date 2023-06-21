@@ -7,6 +7,7 @@ import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 import androidx.work.WorkRequest;
 
+import android.Manifest;
 import android.app.Application;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -26,6 +27,12 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private Button searchButton;
     private Button saveButton;
     private Button settingsButton;
+    private String[] backgroundLocationPermission = {
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_BACKGROUND_LOCATION
+    };
+    private PermissionsManager permissionsManager;
     private LocationManager locationManager;
     private WorkRequest backgroundWorkRequest;
 
@@ -37,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         saveButton = findViewById(R.id.saved);
         searchButton = findViewById(R.id.find);
         settingsButton = findViewById(R.id.settings);
-        PermissionsManager.checkGPSPermissions(this);
+        permissionsManager = PermissionsManager.getInstance(this);
         locationManager = LocationManager.getInstance(this);
 
         saveButton.setOnClickListener(onSave);
@@ -47,17 +54,21 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     @Override
     protected void onStart() {
+        super.onStart();
         UserSettings.registerSettings(this, this);
-        if (PermissionsManager.permissionsGranted(this)) {
+        if (!permissionsManager.checkPermissions(backgroundLocationPermission)) {
+            permissionsManager.askPermissions(this, backgroundLocationPermission, 200);
+        } else {
             startLocationWork();
         }
-        super.onStart();
     }
 
     @Override
     protected void onDestroy() {
-        UserSettings.unregisterSettings(this, this);
         super.onDestroy();
+        locationManager.stopLocationUpdates();
+        WorkManager.getInstance(MainActivity.this).cancelAllWork();
+        UserSettings.unregisterSettings(this, this);
     }
 
     private View.OnClickListener onSave = new View.OnClickListener() {
@@ -105,7 +116,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (PermissionsManager.permissionsGranted(this)) {
+
+        if (permissionsManager.handlePermissionResult(MainActivity.this, 200, permissions, grantResults)) {
             startLocationWork();
         }
     }
