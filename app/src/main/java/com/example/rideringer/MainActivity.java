@@ -10,6 +10,7 @@ import androidx.work.WorkRequest;
 import android.Manifest;
 import android.app.Application;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -56,16 +57,15 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     protected void onStart() {
         super.onStart();
         UserSettings.registerSettings(this, this);
-        if (!permissionsManager.checkPermissions(backgroundLocationPermission)) {
-            permissionsManager.askPermissions(this, backgroundLocationPermission, 200);
-        } else {
-            startLocationWork();
-        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        SharedPreferences prefs = getSharedPreferences(getString(R.string.prefs), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("track", false);
+        editor.apply();
         locationManager.stopLocationUpdates();
         WorkManager.getInstance(MainActivity.this).cancelAllWork();
         UserSettings.unregisterSettings(this, this);
@@ -109,6 +109,19 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 OnBootReceiver.setAlarm(MainActivity.this);
             } else {
                 OnBootReceiver.cancelAlarm(MainActivity.this);
+            }
+        }
+        if (key == "track") {
+            boolean track = sharedPreferences.getBoolean(key, false);
+            if (track) {
+                if (!permissionsManager.checkPermissions(backgroundLocationPermission)) {
+                    permissionsManager.askPermissions(this, backgroundLocationPermission, 200);
+                } else {
+                    startLocationWork();
+                }
+            } else {
+                locationManager.stopLocationUpdates();
+                WorkManager.getInstance(MainActivity.this).cancelAllWork();
             }
         }
     }

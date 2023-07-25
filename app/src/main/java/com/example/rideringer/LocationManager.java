@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Looper;
@@ -59,14 +60,21 @@ public class LocationManager {
         locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(@NonNull LocationResult locationResult) {
+                SharedPreferences prefs = context.getSharedPreferences(context.getString(R.string.prefs), Context.MODE_PRIVATE);
+                double lat = Double.longBitsToDouble(prefs.getLong("latitude", 0));
+                double lon = Double.longBitsToDouble(prefs.getLong("longitude", 0));
                 if (locationResult == null) {
                     return;
                 }
                 for (Location location : locationResult.getLocations()) {
                     if (location != null) {
+                        double distance = distance(lat, location.getLatitude(), lon, location.getLongitude());
                         stringBuilder.setLength(0);
-                        stringBuilder.append("Lat: " + location.getLatitude() + "=>" +
-                                "Long: " + location.getLongitude());
+                        if (distance > 0.05) {
+                            stringBuilder.append(distance + " km away");
+                        } else {
+                            stringBuilder.append("You Have Reached Your Destination");
+                        }
 
                         backgroundLocationIntent.putExtra("location", stringBuilder.toString());
                         LocalBroadcastManager.getInstance(context).sendBroadcast(backgroundLocationIntent);
@@ -75,6 +83,32 @@ public class LocationManager {
             }
         };
         createLocationRequest();
+    }
+
+    public static double distance(double lat1, double lat2, double lon1, double lon2) {
+        // The math module contains a function
+        // named toRadians which converts from
+        // degrees to radians.
+        lon1 = Math.toRadians(lon1);
+        lon2 = Math.toRadians(lon2);
+        lat1 = Math.toRadians(lat1);
+        lat2 = Math.toRadians(lat2);
+
+        // Haversine formula
+        double dlon = lon2 - lon1;
+        double dlat = lat2 - lat1;
+        double a = Math.pow(Math.sin(dlat / 2), 2)
+                + Math.cos(lat1) * Math.cos(lat2)
+                * Math.pow(Math.sin(dlon / 2),2);
+
+        double c = 2 * Math.asin(Math.sqrt(a));
+
+        // Radius of earth in kilometers. Use 3956
+        // for miles
+        double r = 6371;
+
+        // calculate the result
+        return(c * r);
     }
 
     protected void createLocationRequest() {

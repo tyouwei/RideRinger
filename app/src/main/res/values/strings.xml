@@ -8,4 +8,5 @@
     <string name="select_mrt"> MRT Station</string>
     <string name="alarm_notification"> alarm</string>
     <string name="banner_notification"> notifications</string>
+    <string name="prefs"> preferences</string>
 </resources>
