@@ -73,7 +73,9 @@ public class LocationManager {
                         if (distance > 0.05) {
                             stringBuilder.append(distance + " km away");
                         } else {
-                            stringBuilder.append("You Have Reached Your Destination");
+                            SharedPreferences.Editor editor = prefs.edit();
+                            editor.putBoolean("track", false);
+                            editor.apply();
                         }
 
                         backgroundLocationIntent.putExtra("location", stringBuilder.toString());
