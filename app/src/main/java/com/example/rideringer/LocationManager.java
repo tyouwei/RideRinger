@@ -72,14 +72,13 @@ public class LocationManager {
                         stringBuilder.setLength(0);
                         if (distance > 0.05) {
                             stringBuilder.append(distance + " km away");
+                            backgroundLocationIntent.putExtra("location", stringBuilder.toString());
+                            LocalBroadcastManager.getInstance(context).sendBroadcast(backgroundLocationIntent);
                         } else {
                             SharedPreferences.Editor editor = prefs.edit();
                             editor.putBoolean("track", false);
                             editor.apply();
                         }
-
-                        backgroundLocationIntent.putExtra("location", stringBuilder.toString());
-                        LocalBroadcastManager.getInstance(context).sendBroadcast(backgroundLocationIntent);
                     }
                 }
             }
