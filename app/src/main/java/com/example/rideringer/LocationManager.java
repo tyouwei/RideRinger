@@ -13,6 +13,7 @@ import android.os.Looper;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.work.WorkManager;
 
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -70,14 +71,14 @@ public class LocationManager {
                     if (location != null) {
                         double distance = distance(lat, location.getLatitude(), lon, location.getLongitude());
                         stringBuilder.setLength(0);
-                        if (distance > 0.05) {
+                        if (distance > 0.6) {
                             stringBuilder.append(distance + " km away");
                             backgroundLocationIntent.putExtra("location", stringBuilder.toString());
                             LocalBroadcastManager.getInstance(context).sendBroadcast(backgroundLocationIntent);
                         } else {
-                            SharedPreferences.Editor editor = prefs.edit();
-                            editor.putBoolean("track", false);
-                            editor.apply();
+                            WorkManager.getInstance(context).cancelAllWork();
+                            //TODO: Ring the alarm here
+                            OnBootReceiver.setAlarm(context);
                         }
                     }
                 }

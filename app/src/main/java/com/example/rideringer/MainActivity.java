@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         editor.putBoolean("track", false);
         editor.apply();
         locationManager.stopLocationUpdates();
-        WorkManager.getInstance(MainActivity.this).cancelAllWork();
+        stopLocationWork();
         UserSettings.unregisterSettings(this, this);
     }
 
@@ -97,20 +97,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key == getString(R.string.alarm_notification) || key == getString(R.string.banner_notification)) {
-            boolean enabled = UserSettings.getSettings(MainActivity.this, key);
-            int flag = (enabled
-                    ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED
-                    : PackageManager.COMPONENT_ENABLED_STATE_DISABLED);
-            ComponentName componentName = new ComponentName(MainActivity.this, OnBootReceiver.class);
-            getPackageManager().setComponentEnabledSetting(componentName, flag, PackageManager.DONT_KILL_APP);
-
-            if (enabled) {
-                OnBootReceiver.setAlarm(MainActivity.this);
-            } else {
-                OnBootReceiver.cancelAlarm(MainActivity.this);
-            }
-        }
         if (key == "track") {
             boolean track = sharedPreferences.getBoolean(key, false);
             if (track) {
@@ -120,8 +106,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                     startLocationWork();
                 }
             } else {
-                locationManager.stopLocationUpdates();
-                WorkManager.getInstance(MainActivity.this).cancelAllWork();
+                stopLocationWork();
             }
         }
     }
@@ -141,5 +126,9 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                         OneTimeWorkRequest.MIN_BACKOFF_MILLIS, TimeUnit.SECONDS)
                 .build();
         WorkManager.getInstance(MainActivity.this).enqueue(backgroundWorkRequest);
+    }
+
+    private void stopLocationWork() {
+        WorkManager.getInstance(MainActivity.this).cancelAllWork();
     }
 }

@@ -3,6 +3,7 @@ package com.example.rideringer;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -40,7 +41,14 @@ public class ListActivity extends AppCompatActivity {
             model.moveToPosition(position);
             double lat = db.getLatitude(model);
             double lon = db.getLongitude(model);
-            //SETTING OF ALARM
+
+            SharedPreferences prefs = getApplicationContext()
+                    .getSharedPreferences(getApplicationContext().getString(R.string.prefs), Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("track", true);
+            editor.putLong("latitude", Double.doubleToRawLongBits(lat));
+            editor.putLong("longitude", Double.doubleToRawLongBits(lon));
+            editor.apply();
         }
     };
 

@@ -17,38 +17,29 @@ import androidx.core.content.ContextCompat;
 public class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        boolean useAlarm = UserSettings.getAlarmSettings(context);
-        boolean useNotification = UserSettings.getNotificationSettings(context);
+        Intent i = new Intent(context, AlarmActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, i, PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
 
-        if (useNotification) {
-            Intent i = new Intent(context, AlarmActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, i, PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
+        String channelId = "location_id";
+        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, channelId)
+                .setSmallIcon(android.R.drawable.stat_notify_chat)
+                .setContentTitle("Ride Ringer")
+                .setContentText("You have reached your destination. Please alight")
+                .setAutoCancel(true)
+                .setSound(defaultSoundUri)
+                .setColor(ContextCompat.getColor(context, com.google.android.material.R.color.design_default_color_primary))
+                .setContentIntent(pendingIntent);
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-            String channelId = "location_id";
-            Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, channelId)
-                    .setSmallIcon(android.R.drawable.stat_notify_chat)
-                    .setContentTitle("Ride Ringer")
-                    .setContentText("You have reached your destination. Please alight")
-                    .setAutoCancel(true)
-                    .setSound(defaultSoundUri)
-                    .setColor(ContextCompat.getColor(context, com.google.android.material.R.color.design_default_color_primary))
-                    .setContentIntent(pendingIntent);
-            NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                NotificationChannel channel = new NotificationChannel(channelId,
-                        "Ride Ringer",
-                        NotificationManager.IMPORTANCE_DEFAULT);
-                notificationManager.createNotificationChannel(channel);
-            }
-
-            notificationManager.notify(0, notificationBuilder.build());
-        } else if (useAlarm) {
-            Intent i = new Intent(context, AlarmActivity.class);
-            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(i);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(channelId,
+                    "Ride Ringer",
+                    NotificationManager.IMPORTANCE_DEFAULT);
+            notificationManager.createNotificationChannel(channel);
         }
+
+        notificationManager.notify(0, notificationBuilder.build());
     }
 }
