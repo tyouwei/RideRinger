@@ -63,7 +63,7 @@ public class BackgroundLocation extends Worker {
 
     private Notification createNotification(String progress) {
         String CHANNEL_ID = "currentLocation";
-        String title = "Foreground Work";
+        String title = "Estimating Distance...";
         String cancel = "Cancel";
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
