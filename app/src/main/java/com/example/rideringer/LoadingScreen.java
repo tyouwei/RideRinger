@@ -38,19 +38,18 @@ public class LoadingScreen extends AppCompatActivity {
         setContentView(R.layout.activity_loading_screen);
 
         progressBar = findViewById(R.id.progressBar);
-        new Handler(Looper.getMainLooper()).post(new Runnable() {
-            @Override
-            public void run() {
-                fetchBusStops();
-                onFinishLoad();
-            }
-        });
+        fetchBusStops();
+        Log.e("test", "loading trigger");
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
     }
 
     private void fetchBusStops() {
         ArrayList<String> buses = new ArrayList<>();
         HashMap<String, Pair<String, LatLng>> locationMap = new HashMap<>();
-        ArrayList<Void> completedList = new ArrayList<>();
         int numOfCalls = 11;
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();
@@ -77,7 +76,6 @@ public class LoadingScreen extends AppCompatActivity {
                             buses.add(name);
                             locationMap.put(name, new Pair<>(desc, new LatLng(lat, lon)));
                         }
-                        completedList.add(null);
                     } catch (JSONException e) {
                         Log.e("JSON Conversion", "Response not successful: " + response);
                     }
@@ -98,19 +96,14 @@ public class LoadingScreen extends AppCompatActivity {
                     .thenAcceptAsync(x -> client.newCall(x).enqueue(cb));
             cf.add(request);
         }
-        //My bootleg implementation of join
-        while (true) {
-            boolean complete = true;
-            if (completedList.size() != numOfCalls) {
-                complete = false;
-            }
-            if (complete) {
-                Log.d("REST API", "Number of buses: " + new Integer(buses.size()));
-                LocationDetails details = (LocationDetails) getApplication();
-                details.updateDetails(buses, locationMap);
-                return;
-            }
-        }
+
+        CompletableFuture.allOf(cf.toArray(new CompletableFuture[0])).thenRun(() -> {
+            Log.d("REST API", "Number of buses: " + new Integer(buses.size()));
+            LocationDetails details = (LocationDetails) getApplication();
+            details.updateDetails(buses, locationMap);
+
+            new Handler(Looper.getMainLooper()).post(() -> onFinishLoad());
+        });
     }
 
     private void onFinishLoad() {
