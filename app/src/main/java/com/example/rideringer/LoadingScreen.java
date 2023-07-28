@@ -6,19 +6,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.JsonReader;
 import android.util.Log;
 import android.util.Pair;
-import android.view.View;
 import android.widget.ProgressBar;
 
-import com.google.android.gms.maps.model.LatLng;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
-import java.io.Serializable;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +23,7 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 public class LoadingScreen extends AppCompatActivity {
     private ProgressBar progressBar;
@@ -49,7 +44,7 @@ public class LoadingScreen extends AppCompatActivity {
 
     private void fetchBusStops() {
         ArrayList<String> buses = new ArrayList<>();
-        HashMap<String, Pair<String, LatLng>> locationMap = new HashMap<>();
+        HashMap<String, Pair<String, Pair<Double, Double>>> locationMap = new HashMap<>();
         int numOfCalls = 11;
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();
@@ -62,21 +57,56 @@ public class LoadingScreen extends AppCompatActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
-                    String responseBody = response.body().string();
-                    //Log.d("REST API", "Response is successful: " + responseBody);
                     try {
-                        JSONArray obj = new JSONObject(responseBody)
-                                .getJSONArray("value");
-                        int len = obj.length();
-                        for (int i = 0; i < len; i++) {
-                            String name = obj.getJSONObject(i).getString("Description");
-                            String desc = obj.getJSONObject(i).getString("RoadName");
-                            double lat = obj.getJSONObject(i).getDouble("Latitude");
-                            double lon = obj.getJSONObject(i).getDouble("Longitude");
-                            buses.add(name);
-                            locationMap.put(name, new Pair<>(desc, new LatLng(lat, lon)));
+                        ResponseBody responseBody = response.body();
+                        JsonReader reader = new JsonReader(new InputStreamReader(responseBody.byteStream()));
+                        reader.beginObject();
+                        while (reader.hasNext()) {
+                            String name = reader.nextName();
+                            if (name.equals("value")) {
+                                reader.beginArray();
+                                while (reader.hasNext()) {
+                                    reader.beginObject();
+                                    String busName = null;
+                                    String roadName = null;
+                                    double latitude = 0.0;
+                                    double longitude = 0.0;
+
+                                    while (reader.hasNext()) {
+                                        String propertyName = reader.nextName();
+                                        switch (propertyName) {
+                                            case "Description":
+                                                busName = reader.nextString();
+                                                break;
+                                            case "RoadName":
+                                                roadName = reader.nextString();
+                                                break;
+                                            case "Latitude":
+                                                latitude = reader.nextDouble();
+                                                break;
+                                            case "Longitude":
+                                                longitude = reader.nextDouble();
+                                                break;
+                                            default:
+                                                reader.skipValue();
+                                        }
+                                    }
+                                    if (busName != null) {
+                                        synchronized (this) {
+                                            buses.add(busName);
+                                            locationMap.put(busName, new Pair<>(roadName, new Pair<>(latitude, longitude)));
+                                        }
+                                    }
+
+                                    reader.endObject();
+                                }
+                                reader.endArray();
+                            } else {
+                                reader.skipValue();
+                            }
                         }
-                    } catch (JSONException e) {
+                        reader.endObject();
+                    } catch (Exception e) {
                         Log.e("JSON Conversion", "Response not successful: " + response);
                     }
                 } else {
@@ -101,7 +131,6 @@ public class LoadingScreen extends AppCompatActivity {
             Log.d("REST API", "Number of buses: " + new Integer(buses.size()));
             LocationDetails details = (LocationDetails) getApplication();
             details.updateDetails(buses, locationMap);
-
             new Handler(Looper.getMainLooper()).post(() -> onFinishLoad());
         });
     }

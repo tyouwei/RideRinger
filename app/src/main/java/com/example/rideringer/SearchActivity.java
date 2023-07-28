@@ -9,8 +9,6 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import android.os.Bundle;
 import android.os.Parcelable;
-
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.tabs.TabLayout;
 
 import java.io.Serializable;

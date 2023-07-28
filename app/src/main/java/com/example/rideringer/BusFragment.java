@@ -17,8 +17,6 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.model.LatLng;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -27,7 +25,7 @@ public class BusFragment extends Fragment {
     private AutoCompleteTextView autoCompleteTextView;
     private ArrayAdapter<String> adapterItems;
     private ArrayList<String> buses;
-    private HashMap<String, Pair<String, LatLng>> locationMap;
+    private HashMap<String, Pair<String, Pair<Double, Double>>> locationMap;
     private Database db;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -43,14 +41,13 @@ public class BusFragment extends Fragment {
         LocationDetails details = (LocationDetails) getActivity().getApplication();
         buses = details.getBuses();
         locationMap = details.getHashmap();
+        Toast.makeText(getContext(), buses.size() + "", Toast.LENGTH_SHORT).show();
 
         // Sorts the bus stops fetched from Data Mall and deals with exception by reloading
         try {
             buses.sort(Comparator.naturalOrder());
         } catch (NullPointerException e) {
-            Log.e("NullPointerException", String.valueOf(e));
-            Intent i = new Intent(getActivity(), LoadingScreen.class);
-            startActivity(i);
+            getActivity().finish();
         }
 
         // For the drop-down list
@@ -72,11 +69,11 @@ public class BusFragment extends Fragment {
         @Override
         public void onClick(View v) {
             String nameStr = autoCompleteTextView.getText().toString();
-            Pair<String, LatLng> pair = locationMap.get(nameStr);
+            Pair<String, Pair<Double, Double>> pair = locationMap.get(nameStr);
             if (pair != null) {
                 String descStr = pair.first;
-                double lat = pair.second.latitude;
-                double lon = pair.second.longitude;
+                double lat = pair.second.first;
+                double lon = pair.second.second;
                 db.insert(nameStr, descStr, lat, lon);
             } else {
                 Toast.makeText(getContext(), "Please Select a Bus Stop", Toast.LENGTH_SHORT).show();
@@ -89,16 +86,18 @@ public class BusFragment extends Fragment {
         public void onClick(View v) {
             //Set Alarm
             String nameStr = autoCompleteTextView.getText().toString();
-            Pair<String, LatLng> pair = locationMap.get(nameStr);
+            Pair<String, Pair<Double, Double>> pair = locationMap.get(nameStr);
             SharedPreferences prefs = getContext().getSharedPreferences(getContext().getString(R.string.prefs), Context.MODE_PRIVATE);
             if (pair != null) {
-                double lat = pair.second.latitude;
-                double lon = pair.second.longitude;
+                double lat = pair.second.first;
+                double lon = pair.second.second;
                 SharedPreferences.Editor editor = prefs.edit();
                 editor.putBoolean("track", true);
                 editor.putLong("latitude", Double.doubleToRawLongBits(lat));
                 editor.putLong("longitude", Double.doubleToRawLongBits(lon));
                 editor.apply();
+
+                getActivity().finish();
             } else {
                 Toast.makeText(getContext(), "Please Select a Bus Stop", Toast.LENGTH_SHORT).show();
             }
