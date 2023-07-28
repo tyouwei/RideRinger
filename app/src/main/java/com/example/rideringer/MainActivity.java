@@ -44,19 +44,17 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         saveButton = findViewById(R.id.saved);
         searchButton = findViewById(R.id.find);
-        settingsButton = findViewById(R.id.settings);
         permissionsManager = PermissionsManager.getInstance(this);
         locationManager = LocationManager.getInstance(this);
 
         saveButton.setOnClickListener(onSave);
         searchButton.setOnClickListener(onSearch);
-        settingsButton.setOnClickListener(onSettings);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        UserSettings.registerSettings(this, this);
+        UserSettings.registerPrefs(this, this);
     }
 
     @Override
@@ -68,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         editor.apply();
         locationManager.stopLocationUpdates();
         stopLocationWork();
-        UserSettings.unregisterSettings(this, this);
+        UserSettings.unregisterPrefs(this, this);
     }
 
     private View.OnClickListener onSave = new View.OnClickListener() {
@@ -83,14 +81,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         @Override
         public void onClick(View v) {
             Intent i = new Intent(getApplicationContext(), LoadingScreen.class);
-            startActivity(i);
-        }
-    };
-
-    private View.OnClickListener onSettings = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Intent i = new Intent(getApplicationContext(), SettingsActivity.class);
             startActivity(i);
         }
     };
