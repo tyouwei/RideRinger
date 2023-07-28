@@ -42,13 +42,7 @@ public class BusFragment extends Fragment {
         buses = details.getBuses();
         locationMap = details.getHashmap();
         Toast.makeText(getContext(), buses.size() + "", Toast.LENGTH_SHORT).show();
-
-        // Sorts the bus stops fetched from Data Mall and deals with exception by reloading
-        try {
-            buses.sort(Comparator.naturalOrder());
-        } catch (NullPointerException e) {
-            getActivity().finish();
-        }
+        buses.sort(Comparator.naturalOrder());
 
         // For the drop-down list
         autoCompleteTextView = v.findViewById(R.id.bus_drop_list);

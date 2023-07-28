@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -33,19 +34,19 @@ public class LoadingScreen extends AppCompatActivity {
         setContentView(R.layout.activity_loading_screen);
 
         progressBar = findViewById(R.id.progressBar);
-        fetchBusStops();
-        Log.e("test", "loading trigger");
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+        fetchBusStops();
     }
 
     private void fetchBusStops() {
         ArrayList<String> buses = new ArrayList<>();
         HashMap<String, Pair<String, Pair<Double, Double>>> locationMap = new HashMap<>();
         int numOfCalls = 11;
+        final CountDownLatch latch = new CountDownLatch(numOfCalls);
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();
         Callback cb = new Callback() {
@@ -97,7 +98,6 @@ public class LoadingScreen extends AppCompatActivity {
                                             locationMap.put(busName, new Pair<>(roadName, new Pair<>(latitude, longitude)));
                                         }
                                     }
-
                                     reader.endObject();
                                 }
                                 reader.endArray();
@@ -107,11 +107,12 @@ public class LoadingScreen extends AppCompatActivity {
                         }
                         reader.endObject();
                     } catch (Exception e) {
-                        Log.e("JSON Conversion", "Response not successful: " + response);
+                        Log.e("REST API", "JSON read unsuccessful: " + response);
                     }
                 } else {
                     Log.e("REST API", "Response not successful: " + response);
                 }
+                latch.countDown();
             }
         };
 
@@ -127,12 +128,23 @@ public class LoadingScreen extends AppCompatActivity {
             cf.add(request);
         }
 
-        CompletableFuture.allOf(cf.toArray(new CompletableFuture[0])).thenRun(() -> {
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        new Handler(Looper.getMainLooper()).post(() -> {
             Log.d("REST API", "Number of buses: " + new Integer(buses.size()));
-            LocationDetails details = (LocationDetails) getApplication();
-            details.updateDetails(buses, locationMap);
-            new Handler(Looper.getMainLooper()).post(() -> onFinishLoad());
+            updateLocationList(buses, locationMap);
+            onFinishLoad();
         });
+    }
+
+    private void updateLocationList(ArrayList<String> buses,
+                                    HashMap<String, Pair<String, Pair<Double, Double>>> dictionary) {
+        LocationDetails details = (LocationDetails) getApplication();
+        details.updateDetails(buses, dictionary);
     }
 
     private void onFinishLoad() {
