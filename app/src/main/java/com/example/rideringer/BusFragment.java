@@ -68,6 +68,7 @@ public class BusFragment extends Fragment {
                 double lat = pair.second.first;
                 double lon = pair.second.second;
                 db.insert(nameStr, descStr, lat, lon);
+                getActivity().finish();
             } else {
                 Toast.makeText(getContext(), "Please Select a Bus Stop", Toast.LENGTH_SHORT).show();
             }
@@ -89,6 +90,7 @@ public class BusFragment extends Fragment {
                 editor.putLong("latitude", Double.doubleToRawLongBits(lat));
                 editor.putLong("longitude", Double.doubleToRawLongBits(lon));
                 editor.apply();
+
 
                 getActivity().finish();
             } else {

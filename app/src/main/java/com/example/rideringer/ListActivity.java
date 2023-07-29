@@ -49,6 +49,7 @@ public class ListActivity extends AppCompatActivity {
             editor.putLong("latitude", Double.doubleToRawLongBits(lat));
             editor.putLong("longitude", Double.doubleToRawLongBits(lon));
             editor.apply();
+            finish();
         }
     };
 

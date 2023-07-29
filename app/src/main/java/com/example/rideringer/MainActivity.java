@@ -29,7 +29,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private Button saveButton;
     private String[] locationPermission = {
             Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.ACCESS_FINE_LOCATION
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.POST_NOTIFICATIONS
     };
     private String[] backgroundLocationPermission = {
             Manifest.permission.ACCESS_BACKGROUND_LOCATION
@@ -55,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     @Override
     protected void onStart() {
         super.onStart();
-        UserSettings.registerPrefs(this, this);
+        UserSettings.registerPrefs(MainActivity.this, MainActivity.this);
         if (!permissionsManager.checkPermissions(locationPermission)) {
             permissionsManager.askPermissions(MainActivity.this, locationPermission, 200);
         }
@@ -70,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         editor.apply();
         locationManager.stopLocationUpdates();
         stopLocationWork();
-        UserSettings.unregisterPrefs(this, this);
+        UserSettings.unregisterPrefs(MainActivity.this, MainActivity.this);
     }
 
     private View.OnClickListener onSave = new View.OnClickListener() {
@@ -99,13 +100,11 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key == "track") {
-            boolean track = sharedPreferences.getBoolean(key, false);
-            if (track) {
-                startLocationWork();
-            } else {
-                stopLocationWork();
-            }
+        boolean track = sharedPreferences.getBoolean("track", false);
+        if (track) {
+            startLocationWork();
+        } else {
+            stopLocationWork();
         }
     }
 

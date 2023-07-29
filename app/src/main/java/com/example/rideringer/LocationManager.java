@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Looper;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -71,7 +72,7 @@ public class LocationManager {
                     if (location != null) {
                         double distance = distance(lat, location.getLatitude(), lon, location.getLongitude());
                         stringBuilder.setLength(0);
-                        if (distance > 0.6) {
+                        if (distance > 0.05) {
                             stringBuilder.append(distance + " km away");
                             backgroundLocationIntent.putExtra("location", stringBuilder.toString());
                             LocalBroadcastManager.getInstance(context).sendBroadcast(backgroundLocationIntent);
