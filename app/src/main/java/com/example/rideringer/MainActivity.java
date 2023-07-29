@@ -27,10 +27,11 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     private Button searchButton;
     private Button saveButton;
-    private Button settingsButton;
-    private String[] backgroundLocationPermission = {
+    private String[] locationPermission = {
             Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION
+    };
+    private String[] backgroundLocationPermission = {
             Manifest.permission.ACCESS_BACKGROUND_LOCATION
     };
     private PermissionsManager permissionsManager;
@@ -55,6 +56,9 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     protected void onStart() {
         super.onStart();
         UserSettings.registerPrefs(this, this);
+        if (!permissionsManager.checkPermissions(locationPermission)) {
+            permissionsManager.askPermissions(MainActivity.this, locationPermission, 200);
+        }
     }
 
     @Override
@@ -72,16 +76,24 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private View.OnClickListener onSave = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent i = new Intent(getApplicationContext(), ListActivity.class);
-            startActivity(i);
+            if (!permissionsManager.checkPermissions(backgroundLocationPermission)) {
+                permissionsManager.askPermissions(MainActivity.this, backgroundLocationPermission, 200);
+            } else {
+                Intent i = new Intent(getApplicationContext(), ListActivity.class);
+                startActivity(i);
+            }
         }
     };
 
     private View.OnClickListener onSearch = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent i = new Intent(getApplicationContext(), LoadingScreen.class);
-            startActivity(i);
+            if (!permissionsManager.checkPermissions(backgroundLocationPermission)) {
+                permissionsManager.askPermissions(MainActivity.this, backgroundLocationPermission, 200);
+            } else {
+                Intent i = new Intent(getApplicationContext(), LoadingScreen.class);
+                startActivity(i);
+            }
         }
     };
 
@@ -90,11 +102,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         if (key == "track") {
             boolean track = sharedPreferences.getBoolean(key, false);
             if (track) {
-                if (!permissionsManager.checkPermissions(backgroundLocationPermission)) {
-                    permissionsManager.askPermissions(this, backgroundLocationPermission, 200);
-                } else {
-                    startLocationWork();
-                }
+                startLocationWork();
             } else {
                 stopLocationWork();
             }
@@ -104,10 +112,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (permissionsManager.handlePermissionResult(MainActivity.this, 200, permissions, grantResults)) {
-            startLocationWork();
-        }
+        permissionsManager.handlePermissionResult(MainActivity.this, 200, permissions, grantResults);
     }
     private void startLocationWork() {
         backgroundWorkRequest = new OneTimeWorkRequest.Builder(BackgroundLocation.class)

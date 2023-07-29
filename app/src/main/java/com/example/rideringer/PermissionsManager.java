@@ -35,9 +35,9 @@ public class PermissionsManager {
         this.context = context;
     }
 
-    public boolean checkPermissions(String[] permissions) {
-        for (int i = 0; i < permissions.length; i++) {
-            if (ContextCompat.checkSelfPermission(context, permissions[i]) == PermissionChecker.PERMISSION_DENIED) {
+    public boolean checkPermissions(String... permissions) {
+        for (String p : permissions) {
+            if (ContextCompat.checkSelfPermission(context, p) != PermissionChecker.PERMISSION_GRANTED) {
                 return false;
             }
         }
@@ -79,6 +79,7 @@ public class PermissionsManager {
         };
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            //Toast.makeText(activity, "" + ActivityCompat.shouldShowRequestPermissionRationale(activity, deniedPermission), Toast.LENGTH_SHORT).show();
             if (ActivityCompat.shouldShowRequestPermissionRationale(activity, deniedPermission)) {
                 showMessageOKCancel("Allow access to these permissions(s)", listener);
             }

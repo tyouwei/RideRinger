@@ -41,7 +41,6 @@ public class BusFragment extends Fragment {
         LocationDetails details = (LocationDetails) getActivity().getApplication();
         buses = details.getBuses();
         locationMap = details.getHashmap();
-        Toast.makeText(getContext(), buses.size() + "", Toast.LENGTH_SHORT).show();
         buses.sort(Comparator.naturalOrder());
 
         // For the drop-down list
