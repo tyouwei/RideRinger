@@ -9,6 +9,8 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.widget.Toast;
+
 import com.google.android.material.tabs.TabLayout;
 
 import java.io.Serializable;
@@ -56,7 +58,13 @@ public class SearchActivity extends AppCompatActivity {
         @Override
         public void onPageSelected(int position) {
             super.onPageSelected(position);
-            tabLayout.getTabAt(position).select();
+            //TODO: THIS IF-BLOCK SHOULD BE REMOVED ONCE MRT FEATURE IS FUNCTIONAL, KEEP CODE IN THE ELSE BLOCK
+            if (position == 1) {
+                Toast.makeText(getApplicationContext(), "Feature not yet available", Toast.LENGTH_SHORT).show();
+                tabLayout.getTabAt(0).select();
+            } else {
+                tabLayout.getTabAt(position).select();
+            }
         }
     };
 
@@ -77,7 +85,8 @@ public class SearchActivity extends AppCompatActivity {
 
             switch (position) {
                 case 1:
-                    return new MRTFragment();
+                    //TODO: UNCOMMENT THE BELOW LINE ONCE MRT FEATURE IS AVAILABLE
+                    //return new MRTFragment();
                 default:
                     return busFragment;
             }
